@@ -1,0 +1,512 @@
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <title>
+        TailAdmin Basic Table 2 Responsive
+    </title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;display=swap" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-[#F8FAFC] text-[#475569] min-h-screen flex">
+    <!-- Sidebar -->
+    <aside
+        class="w-64 bg-white border-r border-gray-200 flex flex-col fixed inset-y-0 left-0 z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out">
+        <div class="flex items-center gap-2 px-6 py-5 border-b border-gray-200">
+            <div class="w-8 h-8 rounded-md bg-[#3B82F6] flex items-center justify-center">
+                <i class="fas fa-chart-bar text-white text-lg">
+                </i>
+            </div>
+            <span class="font-semibold text-[#0F172A] text-lg select-none">
+                TailAdmin
+            </span>
+        </div>
+        <nav class="flex-1 overflow-y-auto px-6 py-6 text-sm">
+            <p class="text-xs text-[#94A3B8] uppercase mb-4 select-none">
+                Menu
+            </p>
+            <ul class="space-y-4">
+                <li>
+                    <button aria-expanded="false"
+                        class="flex items-center gap-3 text-[#475569] hover:text-[#0F172A] font-medium w-full">
+                        <i class="far fa-th-large text-lg">
+                        </i>
+                        Dashboard
+                        <i class="fas fa-chevron-down ml-auto text-xs">
+                        </i>
+                    </button>
+                </li>
+                <li>
+                    <a class="flex items-center gap-3 text-[#475569] hover:text-[#0F172A] font-medium" href="#">
+                        <i class="far fa-calendar-alt text-lg">
+                        </i>
+                        Calendar
+                    </a>
+                </li>
+                <li>
+                    <a class="flex items-center gap-3 text-[#475569] hover:text-[#0F172A] font-medium" href="#">
+                        <i class="far fa-user-circle text-lg">
+                        </i>
+                        User Profile
+                    </a>
+                </li>
+                <li>
+                    <button aria-expanded="false"
+                        class="flex items-center gap-3 text-[#475569] hover:text-[#0F172A] font-medium w-full">
+                        <i class="far fa-tasks text-lg">
+                        </i>
+                        Task
+                        <i class="fas fa-chevron-down ml-auto text-xs">
+                        </i>
+                    </button>
+                </li>
+                <li>
+                    <button aria-expanded="false"
+                        class="flex items-center gap-3 text-[#475569] hover:text-[#0F172A] font-medium w-full">
+                        <i class="far fa-file-alt text-lg">
+                        </i>
+                        Forms
+                        <i class="fas fa-chevron-down ml-auto text-xs">
+                        </i>
+                    </button>
+                </li>
+                <li>
+                    <button aria-expanded="true"
+                        class="flex items-center gap-3 text-[#2563EB] font-medium w-full rounded-md bg-[#EFF6FF] px-3 py-2">
+                        <i class="far fa-table text-lg text-[#2563EB]">
+                        </i>
+                        Tables
+                        <i class="fas fa-chevron-down ml-auto text-xs">
+                        </i>
+                    </button>
+                    <ul class="mt-2 ml-8 space-y-1">
+                        <li>
+                            <a class="block text-[#2563EB] font-medium rounded-md bg-[#DBEAFE] px-3 py-1" href="#">
+                                Basic Tables
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a class="flex items-center gap-3 text-[#475569] hover:text-[#0F172A] font-medium" href="#">
+                        <i class="far fa-database text-lg">
+                        </i>
+                        Data Tables
+                        <span
+                            class="ml-2 text-[10px] font-semibold text-[#2563EB] bg-[#DBEAFE] rounded-full px-2 py-0.5 select-none">
+                            PRO
+                        </span>
+                    </a>
+                </li>
+                <li>
+                    <button aria-expanded="false"
+                        class="flex items-center gap-3 text-[#475569] hover:text-[#0F172A] font-medium w-full">
+                        <i class="far fa-copy text-lg">
+                        </i>
+                        Pages
+                        <i class="fas fa-chevron-down ml-auto text-xs">
+                        </i>
+                    </button>
+                </li>
+            </ul>
+            <p class="text-xs text-[#94A3B8] uppercase mt-10 mb-4 select-none">
+                Support
+            </p>
+            <ul class="space-y-4">
+                <li>
+                    <a class="flex items-center gap-3 text-[#475569] hover:text-[#0F172A] font-semibold" href="#">
+                        <i class="far fa-comment-alt text-lg">
+                        </i>
+                        Chat
+                    </a>
+                </li>
+                <li>
+                    <button aria-expanded="false"
+                        class="flex items-center gap-3 text-[#475569] hover:text-[#0F172A] font-medium w-full">
+                        <i class="far fa-envelope text-lg">
+                        </i>
+                        Email
+                        <i class="fas fa-chevron-down ml-auto text-xs">
+                        </i>
+                    </button>
+                </li>
+                <li>
+                    <a class="flex items-center gap-3 text-[#475569] hover:text-[#0F172A] font-medium" href="#">
+                        <i class="far fa-file-invoice text-lg">
+                        </i>
+                        Invoice
+                    </a>
+                </li>
+            </ul>
+            <p class="text-xs text-[#94A3B8] uppercase mt-10 mb-4 select-none">
+                Others
+            </p>
+            <ul class="space-y-4">
+                <li>
+                    <button aria-expanded="false"
+                        class="flex items-center gap-3 text-[#475569] hover:text-[#0F172A] font-semibold w-full">
+                        <i class="far fa-chart-pie text-lg">
+                        </i>
+                        Charts
+                        <i class="fas fa-chevron-down ml-auto text-xs">
+                        </i>
+                    </button>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+    <!-- Mobile menu backdrop -->
+    <div class="fixed inset-0 bg-black bg-opacity-30 z-10 md:hidden hidden" id="backdrop"></div>
+    <!-- Main content -->
+    <div class="flex-1 flex flex-col overflow-y-auto md:ml-64">
+        <!-- Topbar -->
+        <header class="flex items-center justify-between border-b border-gray-200 px-4 py-3 bg-white sticky top-0 z-20">
+            <div class="flex items-center gap-3">
+                <button aria-label="Toggle menu"
+                    class="p-2 rounded-md border border-gray-300 text-gray-500 hover:text-gray-700 hover:border-gray-400 md:hidden"
+                    id="menu-btn">
+                    <i class="fas fa-bars">
+                    </i>
+                </button>
+                <form
+                    class="flex items-center border border-gray-300 rounded-md px-3 py-1.5 text-gray-400 text-sm w-[200px] sm:w-[300px]"
+                    role="search">
+                    <i class="fas fa-search mr-2">
+                    </i>
+                    <input class="outline-none w-full text-xs text-gray-500 placeholder:text-gray-300"
+                        placeholder="Search or type command..." type="search" />
+                    <span
+                        class="ml-2 text-xs text-gray-300 border border-gray-300 rounded px-1.5 py-0.5 select-none hidden sm:inline-block">
+                        ⌘K
+                    </span>
+                </form>
+            </div>
+            <div class="flex items-center gap-4">
+                <button aria-label="Toggle dark mode"
+                    class="p-2 rounded-full border border-gray-300 text-gray-500 hover:text-gray-700 hover:border-gray-400">
+                    <i class="fas fa-moon">
+                    </i>
+                </button>
+                <button aria-label="Notifications"
+                    class="relative p-2 rounded-full border border-gray-300 text-gray-500 hover:text-gray-700 hover:border-gray-400">
+                    <i class="fas fa-bell">
+                    </i>
+                    <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-[#F97316] rounded-full border border-white">
+                    </span>
+                </button>
+                <div class="flex items-center gap-2 cursor-pointer select-none">
+                    <img alt="User avatar of a man with beard and short hair wearing a blue shirt"
+                        class="w-8 h-8 rounded-full object-cover" height="32"
+                        src="https://storage.googleapis.com/a1aa/image/5799eff4-6ac9-4117-a806-2ed008be5122.jpg"
+                        width="32" />
+                    <span class="text-sm font-medium text-[#0F172A] hidden sm:inline">
+                        Musharof
+                    </span>
+                    <i class="fas fa-chevron-down text-xs text-gray-400">
+                    </i>
+                </div>
+            </div>
+        </header>
+        <!-- Content -->
+        <main class="p-4 sm:p-6 space-y-6">
+            <section>
+                <h2 class="text-sm font-semibold text-[#0F172A] mb-4 select-none">
+                    Basic Table 2
+                </h2>
+                <div class="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 shadow-sm max-w-full overflow-x-auto">
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-3 sm:gap-0">
+                        <h3 class="font-semibold text-[#0F172A] text-sm select-none">
+                            Recent Orders
+                        </h3>
+                        <div class="flex gap-2 w-full sm:w-auto">
+                            <form
+                                class="flex items-center border border-gray-300 rounded-md px-3 py-1.5 text-gray-400 text-xs flex-grow sm:flex-grow-0"
+                                role="search">
+                                <i class="fas fa-search mr-2">
+                                </i>
+                                <input class="outline-none w-full text-xs text-gray-500 placeholder:text-gray-300"
+                                    placeholder="Search..." type="search" />
+                            </form>
+                            <button
+                                class="flex items-center gap-1 border border-gray-300 rounded-md px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-100 whitespace-nowrap"
+                                type="button">
+                                <i class="fas fa-sliders-h text-xs">
+                                </i>
+                                Filter
+                            </button>
+                        </div>
+                    </div>
+                    <table
+                        class="w-full text-xs text-left text-[#475569] border-collapse border border-gray-100 rounded-md overflow-hidden min-w-[600px] sm:min-w-full">
+                        <thead class="bg-[#F9FAFB] text-[#94A3B8] select-none">
+                            <tr>
+                                <th class="p-3 border border-gray-100 w-6">
+                                    <input aria-label="Select all rows" type="checkbox" />
+                                </th>
+                                <th class="p-3 border border-gray-100 w-[90px]">
+                                    Deal ID
+                                </th>
+                                <th class="p-3 border border-gray-100 w-[220px]">
+                                    Customer
+                                </th>
+                                <th class="p-3 border border-gray-100 w-[180px]">
+                                    Product/Service
+                                </th>
+                                <th class="p-3 border border-gray-100 w-[110px]">
+                                    Deal Value
+                                </th>
+                                <th class="p-3 border border-gray-100 w-[110px]">
+                                    Close Date
+                                </th>
+                                <th class="p-3 border border-gray-100 w-[90px]">
+                                    Status
+                                </th>
+                                <th class="p-3 border border-gray-100 w-[50px]">
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                <td class="p-3 border border-gray-100">
+                                    <input aria-label="Select row" type="checkbox" />
+                                </td>
+                                <td class="p-3 border border-gray-100 font-semibold text-[#0F172A]">
+                                    DE124321
+                                </td>
+                                <td class="p-3 border border-gray-100 flex items-center gap-3">
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-[#DBEAFE] text-[#2563EB] font-semibold flex items-center justify-center text-xs select-none">
+                                        JD
+                                    </div>
+                                    <div class="leading-tight">
+                                        <div class="font-semibold text-[#0F172A]">
+                                            John Doe
+                                        </div>
+                                        <div class="text-[#64748B] text-[11px]">
+                                            johndeo@gmail.com
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="p-3 border border-gray-100">
+                                    Software License
+                                </td>
+                                <td class="p-3 border border-gray-100">
+                                    $18,50.34
+                                </td>
+                                <td class="p-3 border border-gray-100">
+                                    2024-06-15
+                                </td>
+                                <td class="p-3 border border-gray-100">
+                                    <span
+                                        class="inline-block bg-[#DCFCE7] text-[#22C55E] text-[10px] font-semibold px-2 py-0.5 rounded-full select-none">
+                                        Complete
+                                    </span>
+                                </td>
+                                <td
+                                    class="p-3 border border-gray-100 text-center text-gray-400 hover:text-gray-600 cursor-pointer">
+                                    <i class="fas fa-trash-alt">
+                                    </i>
+                                </td>
+                            </tr>
+                            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                <td class="p-3 border border-gray-100">
+                                    <input aria-label="Select row" type="checkbox" />
+                                </td>
+                                <td class="p-3 border border-gray-100 font-semibold text-[#0F172A]">
+                                    DE124321
+                                </td>
+                                <td class="p-3 border border-gray-100 flex items-center gap-3">
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-[#FCE7F3] text-[#DB2777] font-semibold flex items-center justify-center text-xs select-none">
+                                        KF
+                                    </div>
+                                    <div class="leading-tight">
+                                        <div class="font-semibold text-[#0F172A]">
+                                            Kierra Franci
+                                        </div>
+                                        <div class="text-[#64748B] text-[11px]">
+                                            kierra@gmail.com
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="p-3 border border-gray-100">
+                                    Software License
+                                </td>
+                                <td class="p-3 border border-gray-100">
+                                    $18,50.34
+                                </td>
+                                <td class="p-3 border border-gray-100">
+                                    2024-06-15
+                                </td>
+                                <td class="p-3 border border-gray-100">
+                                    <span
+                                        class="inline-block bg-[#DCFCE7] text-[#22C55E] text-[10px] font-semibold px-2 py-0.5 rounded-full select-none">
+                                        Complete
+                                    </span>
+                                </td>
+                                <td
+                                    class="p-3 border border-gray-100 text-center text-gray-400 hover:text-gray-600 cursor-pointer">
+                                    <i class="fas fa-trash-alt">
+                                    </i>
+                                </td>
+                            </tr>
+                            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                <td class="p-3 border border-gray-100">
+                                    <input aria-label="Select row" type="checkbox" />
+                                </td>
+                                <td class="p-3 border border-gray-100 font-semibold text-[#0F172A]">
+                                    DE124321
+                                </td>
+                                <td class="p-3 border border-gray-100 flex items-center gap-3">
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-[#DBEAFE] text-[#2563EB] font-semibold flex items-center justify-center text-xs select-none">
+                                        EW
+                                    </div>
+                                    <div class="leading-tight">
+                                        <div class="font-semibold text-[#0F172A]">
+                                            Emerson Workman
+                                        </div>
+                                        <div class="text-[#64748B] text-[11px]">
+                                            emerson@gmail.com
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="p-3 border border-gray-100">
+                                    Software License
+                                </td>
+                                <td class="p-3 border border-gray-100">
+                                    $18,50.34
+                                </td>
+                                <td class="p-3 border border-gray-100">
+                                    2024-06-15
+                                </td>
+                                <td class="p-3 border border-gray-100">
+                                    <span
+                                        class="inline-block bg-[#FED7AA] text-[#F97316] text-[10px] font-semibold px-2 py-0.5 rounded-full select-none">
+                                        Pending
+                                    </span>
+                                </td>
+                                <td
+                                    class="p-3 border border-gray-100 text-center text-gray-400 hover:text-gray-600 cursor-pointer">
+                                    <i class="fas fa-trash-alt">
+                                    </i>
+                                </td>
+                            </tr>
+                            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                <td class="p-3 border border-gray-100">
+                                    <input aria-label="Select row" type="checkbox" />
+                                </td>
+                                <td class="p-3 border border-gray-100 font-semibold text-[#0F172A]">
+                                    DE124321
+                                </td>
+                                <td class="p-3 border border-gray-100 flex items-center gap-3">
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-[#FED7AA] text-[#EA580C] font-semibold flex items-center justify-center text-xs select-none">
+                                        CP
+                                    </div>
+                                    <div class="leading-tight">
+                                        <div class="font-semibold text-[#0F172A]">
+                                            Chance Philips
+                                        </div>
+                                        <div class="text-[#64748B] text-[11px]">
+                                            chance@gmail.com
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="p-3 border border-gray-100">
+                                    Software License
+                                </td>
+                                <td class="p-3 border border-gray-100">
+                                    $18,50.34
+                                </td>
+                                <td class="p-3 border border-gray-100">
+                                    2024-06-15
+                                </td>
+                                <td class="p-3 border border-gray-100">
+                                    <span
+                                        class="inline-block bg-[#DCFCE7] text-[#22C55E] text-[10px] font-semibold px-2 py-0.5 rounded-full select-none">
+                                        Complete
+                                    </span>
+                                </td>
+                                <td
+                                    class="p-3 border border-gray-100 text-center text-gray-400 hover:text-gray-600 cursor-pointer">
+                                    <i class="fas fa-trash-alt">
+                                    </i>
+                                </td>
+                            </tr>
+                            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                <td class="p-3 border border-gray-100">
+                                    <input aria-label="Select row" type="checkbox" />
+                                </td>
+                                <td class="p-3 border border-gray-100 font-semibold text-[#0F172A]">
+                                    DE124321
+                                </td>
+                                <td class="p-3 border border-gray-100 flex items-center gap-3">
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-[#BBF7D0] text-[#22C55E] font-semibold flex items-center justify-center text-xs select-none">
+                                        TG
+                                    </div>
+                                    <div class="leading-tight">
+                                        <div class="font-semibold text-[#0F172A]">
+                                            Terry Geidt
+                                        </div>
+                                        <div class="text-[#64748B] text-[11px]">
+                                            terry@gmail.com
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="p-3 border border-gray-100">
+                                    Software License
+                                </td>
+                                <td class="p-3 border border-gray-100">
+                                    $18,50.34
+                                </td>
+                                <td class="p-3 border border-gray-100">
+                                    2024-06-15
+                                </td>
+                                <td class="p-3 border border-gray-100">
+                                    <span
+                                        class="inline-block bg-[#DCFCE7] text-[#22C55E] text-[10px] font-semibold px-2 py-0.5 rounded-full select-none">
+                                        Complete
+                                    </span>
+                                </td>
+                                <td
+                                    class="p-3 border border-gray-100 text-center text-gray-400 hover:text-gray-600 cursor-pointer">
+                                    <i class="fas fa-trash-alt">
+                                    </i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script>
+        const menuBtn = document.getElementById('menu-btn');
+        const sidebar = document.querySelector('aside');
+        const backdrop = document.getElementById('backdrop');
+
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+            backdrop.classList.toggle('hidden');
+        });
+
+        backdrop.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            backdrop.classList.add('hidden');
+        });
+    </script>
+</body>
+
+</html>
