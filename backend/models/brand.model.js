@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const Product = sequelize.define('Product', {
+    const brands = sequelize.define('Brands', {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
         name: { type: DataTypes.STRING },
         created_at: { type: DataTypes.DATE },
@@ -11,5 +11,5 @@ module.exports = (sequelize, DataTypes) => {
         updatedAt: 'updated_at',
     });
 
-    return Product;
+    return brands;
 };

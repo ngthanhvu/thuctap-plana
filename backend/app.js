@@ -27,6 +27,7 @@ app.use('/api/product_images', require('./routes/product_image.routes'));
 // app.use('/api/product_categories', require('./routes/product_category.routes'));
 app.use('/api/products', require('./routes/product.routes'));
 app.use('/api/brands', require('./routes/brand.routes'));
+app.use('/api/product-categories', require('./routes/product_category.routes'));
 
 db.sequelize.sync({ force: false }).then(() => {
     console.log('Database synced.');
