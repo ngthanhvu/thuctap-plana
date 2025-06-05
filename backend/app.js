@@ -6,6 +6,7 @@ app.use(express.json());
 
 app.use('/api/products', require('./routes/product.routes'));
 app.use('/api/brands', require('./routes/brand.routes'));
+app.use('/api/product-categories', require('./routes/product_category.routes'));
 
 db.sequelize.sync({ force: false }).then(() => {
     console.log('Database synced.');
