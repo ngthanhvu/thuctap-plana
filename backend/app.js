@@ -1,23 +1,13 @@
 const express = require('express');
-const cors = require('cors');
-const routes = require('./routes');
-const errorHandler = require('./middlewares/errorHandler');
-const swaggerConfig = require('./config/swagger');
-
 const app = express();
+const db = require('./models');
 
-// Middleware
-app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// API Routes
-app.use('/api/v1', routes);
+app.use('/api/products', require('./routes/product.routes'));
+app.use('/api/brands', require('./routes/brand.routes'));
 
-// Swagger Documentation
-swaggerConfig(app);
-
-// Error handling middleware
-app.use(errorHandler);
-
-module.exports = app;
+db.sequelize.sync({ force: false }).then(() => {
+    console.log('Database synced.');
+    app.listen(3000, () => console.log('Server running on port 3000'));
+});
