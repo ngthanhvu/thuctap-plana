@@ -6,7 +6,9 @@ module.exports = (sequelize, DataTypes) => {
         updated_at: { type: DataTypes.DATE }
     }, {
         tableName: 'brands',
-        timestamps: false
+        timestamps: true,
+        createdAt: 'created_at',
+        updatedAt: 'updated_at',
     });
 
     return Product;
