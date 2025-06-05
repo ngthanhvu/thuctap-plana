@@ -28,14 +28,31 @@ exports.create = async (req, res) => {
     }
 };
 
+// exports.update = async (req, res) => {
+//     try {
+//         const brand = await Brand.findByPk(req.params.id);
+//         res.json(brand);
+//     } catch (err) {
+//         res.status(500).json({ message: err.message });
+//     }
+// };
+
 exports.update = async (req, res) => {
     try {
         const brand = await Brand.findByPk(req.params.id);
+        if (!brand) {
+            return res.status(404).json({ message: 'Brand not found' });
+        }
+
+        brand.name = req.body.name;
+        await brand.save();
+
         res.json(brand);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 };
+
 
 exports.delete = async (req, res) => {
     try {
