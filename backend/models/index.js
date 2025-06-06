@@ -28,6 +28,7 @@ db.customer_point = require('./customer_point.model')(sequelize, Sequelize);
 db.staff = require('./staff.model')(sequelize, Sequelize.DataTypes);
 db.role = require('./role.model')(sequelize, Sequelize.DataTypes);
 db.staff_log = require('./staff_log.model')(sequelize, Sequelize.DataTypes);
+db.user = require('./user.model')(sequelize, Sequelize.DataTypes);
 
 
 
