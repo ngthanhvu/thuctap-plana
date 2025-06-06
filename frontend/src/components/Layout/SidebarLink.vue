@@ -13,7 +13,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { ShoppingBag, Users, UserCog } from 'lucide-vue-next'
+import { ShoppingBag, Users, UserCog, ChartColumnBig } from 'lucide-vue-next'
 
 const props = defineProps({
     to: String,
@@ -23,7 +23,8 @@ const props = defineProps({
 const iconMap = {
     'shopping-bag': ShoppingBag,
     'users': Users,
-    'user-group': UserCog
+    'user-group': UserCog,
+    'chart-column-big': ChartColumnBig
 }
 
 const iconComponent = computed(() => iconMap[props.icon] || null)

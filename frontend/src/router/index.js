@@ -13,6 +13,7 @@ import InventoryList from '../views/inventory/InventoryList.vue'
 import InventoryImport from '../views/inventory/Import.vue'
 import OrderList from '../views/orders/OrderList.vue'
 import StaffList from '../views/staff/StaffList.vue'
+import Dashboard from '../views/dashboard/Dashboard.vue'
 
 const routes = [
     {
@@ -21,10 +22,10 @@ const routes = [
         children: [
             {
                 path: '',
-                name: 'Home',
-                component: HomeView,
+                name: 'Dashboard',
+                component: Dashboard,
                 meta: {
-                    title: 'Trang chủ'
+                    title: 'Tổng quan'
                 }
             },
             {

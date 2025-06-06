@@ -5,6 +5,7 @@
         </div>
         <nav class="p-4">
             <ul class="space-y-2">
+                <SidebarLink to="/" icon="chart-column-big">Tổng quan</SidebarLink>
                 <SidebarProductMenu />
                 <SidebarInventoryMenu />
                 <SidebarLink to="/orders" icon="shopping-bag">Đơn hàng</SidebarLink>

@@ -1,9 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-<<<<<<< HEAD
     const Brand = sequelize.define('Brand', {
-=======
-    const brands = sequelize.define('Brands', {
->>>>>>> 3bba53397c9be5b9966ecd385478f7e21284f261
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
         name: { type: DataTypes.STRING },
         created_at: { type: DataTypes.DATE },
@@ -15,9 +11,5 @@ module.exports = (sequelize, DataTypes) => {
         updatedAt: 'updated_at',
     });
 
-<<<<<<< HEAD
     return Brand;
-=======
-    return brands;
->>>>>>> 3bba53397c9be5b9966ecd385478f7e21284f261
 };
