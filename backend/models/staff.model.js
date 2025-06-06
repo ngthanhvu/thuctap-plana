@@ -1,13 +1,13 @@
 module.exports = (sequelize, DataTypes) => {
-    const Staff = sequelize.define("staff", {
+    const Staffs = sequelize.define('Staffs', {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-        name: { type: DataTypes.STRING, allowNull: false },
-        phone: { type: DataTypes.STRING, allowNull: false },
-        address: { type: DataTypes.STRING, allowNull: false },
-        status: { type: DataTypes.STRING, allowNull: false },
-        role_id: { type: DataTypes.INTEGER, allowNull: false },
+        name: { type: DataTypes.STRING },
+        email: { type: DataTypes.STRING },
+        phone: { type: DataTypes.STRING },
+        password: { type: DataTypes.STRING },
+        role: { type: DataTypes.STRING },
+        status: { type: DataTypes.STRING },
         created_at: { type: DataTypes.DATE },
-        updated_at: { type: DataTypes.DATE }
     }, {
         tableName: 'staffs',
         timestamps: true,
@@ -15,5 +15,5 @@ module.exports = (sequelize, DataTypes) => {
         updatedAt: 'updated_at',
     });
 
-    return Staff;
-}
+    return Staffs;
+};
