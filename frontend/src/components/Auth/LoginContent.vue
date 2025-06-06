@@ -4,13 +4,19 @@
             <div class="max-w-[480px] w-full">
                 <div class="p-6 sm:p-8 rounded-2xl bg-white border border-gray-200 shadow-sm">
                     <h1 class="text-slate-900 text-center text-3xl font-semibold">Đăng nhập</h1>
-                    <form class="mt-12 space-y-6">
+
+                    <!-- Hiển thị lỗi -->
+                    <div v-if="error" class="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                        {{ error }}
+                    </div>
+
+                    <form class="mt-12 space-y-6" @submit.prevent="handleLogin">
                         <div>
-                            <label class="text-slate-900 text-sm font-medium mb-2 block">Tài khoản đăng nhập</label>
+                            <label class="text-slate-900 text-sm font-medium mb-2 block">Email đăng nhập</label>
                             <div class="relative flex items-center">
-                                <input name="username" type="text" required
+                                <input v-model="email" name="email" type="email"
                                     class="w-full text-slate-900 text-sm border border-slate-300 px-4 py-3 pr-8 rounded-md outline-blue-600"
-                                    placeholder="Enter user name" />
+                                    placeholder="Nhập email đăng nhập" required />
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb"
                                     class="w-4 h-4 absolute right-4" viewBox="0 0 24 24">
                                     <circle cx="10" cy="7" r="6" data-original="#000000"></circle>
@@ -23,9 +29,9 @@
                         <div>
                             <label class="text-slate-900 text-sm font-medium mb-2 block">Mật khẩu</label>
                             <div class="relative flex items-center">
-                                <input name="password" type="password" required
+                                <input v-model="password" name="password" type="password"
                                     class="w-full text-slate-900 text-sm border border-slate-300 px-4 py-3 pr-8 rounded-md outline-blue-600"
-                                    placeholder="Enter password" />
+                                    placeholder="Nhập mật khẩu" required />
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb"
                                     class="w-4 h-4 absolute right-4 cursor-pointer" viewBox="0 0 128 128">
                                     <path
@@ -43,22 +49,30 @@
                                 </label>
                             </div>
                             <div class="text-sm">
-                                <a href="jajvascript:void(0);" class="text-blue-600 hover:underline font-semibold">
+                                <a href="javascript:void(0);" class="text-blue-600 hover:underline font-semibold">
                                     Quên mật khẩu?
                                 </a>
                             </div>
                         </div>
-
                         <div class="!mt-5">
-                            <button type="button"
-                                class="w-full py-2 px-4 text-[15px] font-medium tracking-wide rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none cursor-pointer">
-                                Đăng nhập
+                            <button type="submit" :disabled="loading" :class="[
+                                'w-full py-2 px-4 text-[15px] font-medium tracking-wide rounded-md text-white focus:outline-none transition-all duration-200 flex items-center justify-center gap-2',
+                                loading
+                                    ? 'bg-blue-400 cursor-not-allowed loading-pulse'
+                                    : 'bg-blue-600 hover:bg-blue-700 cursor-pointer'
+                            ]">
+                                <div v-if="loading" class="flex space-x-1">
+                                    <div class="w-2 h-2 bg-white rounded-full animate-bounce"
+                                        style="animation-delay: 0ms"></div>
+                                    <div class="w-2 h-2 bg-white rounded-full animate-bounce"
+                                        style="animation-delay: 150ms"></div>
+                                    <div class="w-2 h-2 bg-white rounded-full animate-bounce"
+                                        style="animation-delay: 300ms"></div>
+                                </div>
+
+                                <span>{{ loading ? 'Đang đăng nhập...' : 'Đăng nhập' }}</span>
                             </button>
                         </div>
-                        <!-- <p class="text-slate-900 text-sm !mt-6 text-center">Don't have an account? <a
-                                href="javascript:void(0);"
-                                class="text-blue-600 hover:underline ml-1 whitespace-nowrap font-semibold">Register
-                                here</a></p> -->
                     </form>
                 </div>
             </div>
@@ -67,7 +81,51 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
+import { useAuth } from '../../composables/useAuth';
 
+const email = ref('');
+const password = ref('');
+
+const { login, error, loading } = useAuth();
+
+const handleLogin = async () => {
+    try {
+        await login(email.value, password.value);
+    } catch (error) {
+        console.log('Login error:', error);
+    }
+}
 </script>
 
-<style></style>
+<style scoped>
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+.loading-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: .8;
+    }
+}
+</style>

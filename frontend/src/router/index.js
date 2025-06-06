@@ -14,11 +14,13 @@ import InventoryImport from '../views/inventory/Import.vue'
 import OrderList from '../views/orders/OrderList.vue'
 import StaffList from '../views/staff/StaffList.vue'
 import Dashboard from '../views/dashboard/Dashboard.vue'
+import { auth, admin } from './middleware/auth'
 
 const routes = [
     {
         path: '/',
         component: DefaultLayout,
+        meta: { middleware: auth },
         children: [
             {
                 path: '',
@@ -113,7 +115,8 @@ const routes = [
                 name: 'StaffList',
                 component: StaffList,
                 meta: {
-                    title: 'Danh sách nhân viên'
+                    title: 'Danh sách nhân viên',
+                    middleware: admin
                 }
             }
         ]
@@ -133,9 +136,14 @@ const router = createRouter({
     routes
 })
 
-router.beforeEach((to, from, next) => {
-    document.title = `${to.meta.title} | Quản lý bán hàng`;
-    next();
-});
+router.beforeEach(async (to, from, next) => {
+    document.title = `${to.meta.title} | Quản lý bán hàng`
+
+    if (to.meta.middleware) {
+        return to.meta.middleware(to, from, next)
+    }
+
+    next()
+})
 
 export default router
