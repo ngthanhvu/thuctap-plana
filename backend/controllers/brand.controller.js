@@ -28,14 +28,6 @@ exports.create = async (req, res) => {
     }
 };
 
-// exports.update = async (req, res) => {
-//     try {
-//         const brand = await Brand.findByPk(req.params.id);
-//         res.json(brand);
-//     } catch (err) {
-//         res.status(500).json({ message: err.message });
-//     }
-// };
 
 exports.update = async (req, res) => {
     try {

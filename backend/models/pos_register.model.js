@@ -1,23 +1,16 @@
 module.exports = (sequelize, DataTypes) => {
-<<<<<<< HEAD
-    const Brand = sequelize.define('Brand', {
-=======
-    const brands = sequelize.define('Brands', {
->>>>>>> 3bba53397c9be5b9966ecd385478f7e21284f261
+    const Pos_registers = sequelize.define("pos_registers", {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
         name: { type: DataTypes.STRING },
+        location: { type: DataTypes.STRING },
         created_at: { type: DataTypes.DATE },
         updated_at: { type: DataTypes.DATE }
     }, {
-        tableName: 'brands',
+        tableName: 'pos_registers',
         timestamps: true,
         createdAt: 'created_at',
         updatedAt: 'updated_at',
     });
 
-<<<<<<< HEAD
-    return Brand;
-=======
-    return brands;
->>>>>>> 3bba53397c9be5b9966ecd385478f7e21284f261
-};
+    return Pos_registers;
+}
