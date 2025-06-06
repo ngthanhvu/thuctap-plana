@@ -24,10 +24,15 @@ app.use('/api/inventories', require('./routes/inventory.routes'));
 app.use('/api/warehouses', require('./routes/warehouse.routes'));
 app.use('/api/product_variants', require('./routes/product_variant.routes'));
 app.use('/api/product_images', require('./routes/product_image.routes'));
-// app.use('/api/product_categories', require('./routes/product_category.routes'));
+app.use('/api/product_categories', require('./routes/product_category.routes'));
 app.use('/api/products', require('./routes/product.routes'));
 app.use('/api/brands', require('./routes/brand.routes'));
 app.use('/api/product-categories', require('./routes/product_category.routes'));
+app.use('/api/users', require('./routes/user.routes'));
+
+
+
+
 
 db.sequelize.sync({ force: false }).then(() => {
     console.log('Database synced.');
