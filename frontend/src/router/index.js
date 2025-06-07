@@ -13,8 +13,11 @@ import InventoryList from '../views/inventory/InventoryList.vue'
 import InventoryImport from '../views/inventory/Import.vue'
 import OrderList from '../views/orders/OrderList.vue'
 import StaffList from '../views/staff/StaffList.vue'
+import StaffCreate from '../views/staff/StaffCreate.vue'
 import Dashboard from '../views/dashboard/Dashboard.vue'
 import { auth, admin } from './middleware/auth'
+
+import Test from '../views/Test.vue'
 
 const routes = [
     {
@@ -118,6 +121,15 @@ const routes = [
                     title: 'Danh sách nhân viên',
                     middleware: admin
                 }
+            },
+            {
+                path: 'staff/create',
+                name: 'StaffCreate',
+                component: StaffCreate,
+                meta: {
+                    title: 'Thêm nhân viên',
+                    middleware: admin
+                }
             }
         ]
     },
@@ -127,6 +139,14 @@ const routes = [
         component: LoginView,
         meta: {
             title: 'Đăng nhập'
+        }
+    },
+    {
+        path: '/test',
+        name: 'Test',
+        component: Test,
+        meta: {
+            title: 'Test'
         }
     }
 ]

@@ -1,6 +1,6 @@
 <template>
     <div class="px-4 sm:px-6 lg:px-8">
-        <div class="sm:flex sm:items-center">
+        <!-- <div class="sm:flex sm:items-center">
             <div class="sm:flex-auto">
                 <h1 class="text-xl font-semibold text-gray-900">Danh sách thương hiệu</h1>
                 <p class="mt-2 text-sm text-gray-700">Danh sách tất cả thương hiệu trong hệ thống</p>
@@ -13,8 +13,8 @@
             </div>
         </div>
 
-        <!-- Search and Filter -->
-        <div class="mt-4 flex items-center justify-between">
+        Search and Filter -->
+        <!-- <div class="mt-4 flex items-center justify-between">
             <div class="flex items-center space-x-4">
                 <div class="relative">
                     <input type="text"
@@ -30,7 +30,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <!-- Table Component -->
         <BrandTable :brands="brands" />

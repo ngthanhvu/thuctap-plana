@@ -1,6 +1,6 @@
 <template>
     <div class="px-4 sm:px-6 lg:px-8">
-        <div class="sm:flex sm:items-center">
+        <!-- <div class="sm:flex sm:items-center">
             <div class="sm:flex-auto">
                 <h1 class="text-xl font-semibold text-gray-900">Danh sách danh mục</h1>
                 <p class="mt-2 text-sm text-gray-700">Danh sách tất cả danh mục trong hệ thống</p>
@@ -11,10 +11,10 @@
                     Thêm danh mục
                 </router-link>
             </div>
-        </div>
+        </div> -->
 
         <!-- Search and Filter -->
-        <div class="mt-4 flex items-center justify-between">
+        <!-- <div class="mt-4 flex items-center justify-between">
             <div class="flex items-center space-x-4">
                 <div class="relative">
                     <input type="text"
@@ -37,7 +37,7 @@
                     <option value="books">Sách</option>
                 </select>
             </div>
-        </div>
+        </div> -->
 
         <!-- Table Component -->
         <CategoriesTable :products="products" />

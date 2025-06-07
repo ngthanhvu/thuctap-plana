@@ -44,10 +44,13 @@ export const useAuth = () => {
             const response = await axios.post('/api/staffs/login', { email, password })
 
             setAuth(response.data.staff, response.data.token)
-            // router.push('/')
-            Toast.fire({
+            Swal.fire({
+                title: 'Thành công!',
+                text: 'Nhấn OK để tiếp tục hoặc đợi 3 giây.',
                 icon: 'success',
-                title: 'Đăng nhập thành công'
+                timer: 3000,
+                confirmButtonText: 'OK',
+                timerProgressBar: true,
             }).then(() => {
                 router.push('/');
             });
