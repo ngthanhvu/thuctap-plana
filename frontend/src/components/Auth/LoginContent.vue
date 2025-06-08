@@ -29,23 +29,28 @@
                         <div>
                             <label class="text-slate-900 text-sm font-medium mb-2 block">Mật khẩu</label>
                             <div class="relative flex items-center">
-                                <input v-model="password" name="password" type="password"
+                                <input v-model="password" name="password" :type="showPassword ? 'text' : 'password'"
                                     class="w-full text-slate-900 text-sm border border-slate-300 px-4 py-3 pr-8 rounded-md outline-blue-600"
                                     placeholder="Nhập mật khẩu" required />
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb"
-                                    class="w-4 h-4 absolute right-4 cursor-pointer" viewBox="0 0 128 128">
-                                    <path
+                                <svg @click="togglePasswordVisibility" xmlns="http://www.w3.org/2000/svg" fill="#bbb"
+                                    stroke="#bbb" class="w-4 h-4 absolute right-4 cursor-pointer" viewBox="0 0 128 128">
+                                    <path v-if="!showPassword"
                                         d="M64 104C22.127 104 1.367 67.496.504 65.943a4 4 0 0 1 0-3.887C1.367 60.504 22.127 24 64 24s62.633 36.504 63.496 38.057a4 4 0 0 1 0 3.887C126.633 67.496 105.873 104 64 104zM8.707 63.994C13.465 71.205 32.146 96 64 96c31.955 0 50.553-24.775 55.293-31.994C114.535 56.795 95.854 32 64 32 32.045 32 13.447 56.775 8.707 63.994zM64 88c-13.234 0-24-10.766-24-24s10.766-24 24-24 24 10.766 24 24-10.766 24-24 24zm0-40c-8.822 0-16 7.178-16 16s7.178 16 16 16 16-7.178 16-16-7.178-16-16-16z"
                                         data-original="#000000"></path>
+                                    <path v-else
+                                        d="M64 104C22.127 104 1.367 67.496.504 65.943a4 4 0 0 1 0-3.887C1.367 60.504 22.127 24 64 24s62.633 36.504 63.496 38.057a4 4 0 0 1 0 3.887C126.633 67.496 105.873 104 64 104zM8.707 63.994C13.465 71.205 32.146 96 64 96c31.955 0 50.553-24.775 55.293-31.994C114.535 56.795 95.854 32 64 32 32.045 32 13.447 56.775 8.707 63.994z"
+                                        data-original="#000000"></path>
+                                    <path v-if="showPassword" d="M8 64l48-48 48 48-48 48z" stroke="#bbb"
+                                        stroke-width="4" fill="none"></path>
                                 </svg>
                             </div>
                         </div>
                         <div class="flex flex-wrap items-center justify-between gap-4">
                             <div class="flex items-center">
-                                <input id="remember-me" name="remember-me" type="checkbox"
+                                <input id="remember-me" v-model="rememberMe" name="remember-me" type="checkbox"
                                     class="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-slate-300 rounded" />
                                 <label for="remember-me" class="ml-2 block text-sm text-slate-900">
-                                    Ghi nhớ
+                                    Ghi nhớ đăng nhập
                                 </label>
                             </div>
                             <div class="text-sm">
@@ -81,21 +86,61 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useAuth } from '../../composables/useAuth';
 
 const email = ref('');
 const password = ref('');
+const rememberMe = ref(false);
+const showPassword = ref(false);
 
 const { login, error, loading } = useAuth();
 
+const togglePasswordVisibility = () => {
+    showPassword.value = !showPassword.value;
+};
+
+const saveLoginInfo = () => {
+    if (rememberMe.value) {
+        localStorage.setItem('rememberedEmail', email.value);
+        localStorage.setItem('rememberedPassword', password.value);
+        localStorage.setItem('rememberMe', 'true');
+    } else {
+        localStorage.removeItem('rememberedEmail');
+        localStorage.removeItem('rememberedPassword');
+        localStorage.removeItem('rememberMe');
+    }
+};
+
+const loadSavedLoginInfo = () => {
+    const savedRememberMe = localStorage.getItem('rememberMe');
+    if (savedRememberMe === 'true') {
+        const savedEmail = localStorage.getItem('rememberedEmail');
+        const savedPassword = localStorage.getItem('rememberedPassword');
+
+        if (savedEmail) {
+            email.value = savedEmail;
+        }
+        if (savedPassword) {
+            password.value = savedPassword;
+        }
+        rememberMe.value = true;
+    }
+};
+
 const handleLogin = async () => {
     try {
+        saveLoginInfo();
+
         await login(email.value, password.value);
     } catch (error) {
         console.log('Login error:', error);
     }
-}
+};
+
+onMounted(() => {
+    loadSavedLoginInfo();
+});
 </script>
 
 <style scoped>

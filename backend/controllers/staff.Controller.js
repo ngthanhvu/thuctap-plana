@@ -100,4 +100,16 @@ exports.getInfo = async (req, res) => {
     }
 };
 
+exports.getListInfo = async (req, res) => {
+    try {
+        const staffs = await Staffs.findAll({
+            attributes: { exclude: ['password', 'created_at', 'updated_at'] }
+        });
+
+        res.json(staffs);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+}
+
 module.exports = exports;

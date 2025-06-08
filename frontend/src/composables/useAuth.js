@@ -45,8 +45,8 @@ export const useAuth = () => {
 
             setAuth(response.data.staff, response.data.token)
             Swal.fire({
-                title: 'Thành công!',
-                text: 'Nhấn OK để tiếp tục hoặc đợi 3 giây.',
+                title: 'Đăng nhập thành công!',
+                text: 'Nhấn OK để tiếp tục',
                 icon: 'success',
                 timer: 3000,
                 confirmButtonText: 'OK',
@@ -100,6 +100,21 @@ export const useAuth = () => {
         }
     }
 
+    const getListInfo = async () => {
+        try {
+            loading.value = true
+            error.value = null
+
+            const response = await axios.get('/api/staffs/getListInfo')
+            return response.data
+        } catch (err) {
+            error.value = err.response?.data?.message || 'Không thể lấy thông tin người dùng'
+            throw err
+        } finally {
+            loading.value = false
+        }
+    }
+
     const isAuthenticated = () => {
         return !!token.value
     }
@@ -108,7 +123,6 @@ export const useAuth = () => {
         return user.value?.role === 'admin'
     }
 
-    // Thiết lập token từ localStorage khi khởi tạo
     if (token.value) {
         axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}`
     }
@@ -122,6 +136,7 @@ export const useAuth = () => {
         register,
         logout,
         getUserInfo,
+        getListInfo,
         isAuthenticated,
         isAdmin
     }
