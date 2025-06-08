@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import DefaultLayout from '../layouts/DefaultLayout.vue'
-import HomeView from '../views/Home.vue'
 import LoginView from '../views/auth/Login.vue'
 import ProductList from '../views/products/ProductList.vue'
 import ProductCreate from '../views/products/ProductCreate.vue'
@@ -15,6 +14,7 @@ import OrderList from '../views/orders/OrderList.vue'
 import StaffList from '../views/staff/StaffList.vue'
 import StaffCreate from '../views/staff/StaffCreate.vue'
 import Dashboard from '../views/dashboard/Dashboard.vue'
+import Pos from '../views/POS/Sell.vue'
 import { auth, admin } from './middleware/auth'
 
 import Test from '../views/Test.vue'
@@ -147,6 +147,14 @@ const routes = [
         component: Test,
         meta: {
             title: 'Test'
+        }
+    },
+    {
+        path: '/pos/sell',
+        name: 'Pos',
+        component: Pos,
+        meta: {
+            title: 'POS'
         }
     }
 ]
