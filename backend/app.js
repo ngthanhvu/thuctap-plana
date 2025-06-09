@@ -13,6 +13,7 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api/products', require('./routes/product.routes'));
 app.use('/api/brands', require('./routes/brand.routes'));
 app.use('/api/staffs', require('./routes/staff.routes'));
+app.use('/api/categories', require('./routes/category.routes'));
 
 const initializeServices = async () => {
     await connectRedis(); // 👈

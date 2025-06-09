@@ -17,9 +17,9 @@
                 <select id="parentCategory" v-model="formData.parentCategory"
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Không có danh mục cha</option>
-                    <option value="electronics">Điện tử</option>
-                    <option value="clothing">Quần áo</option>
-                    <option value="books">Sách</option>
+                    <option v-for="category in categories" :key="category.id" :value="category.id" >
+                        {{ category.name }}
+                    </option>
                 </select>
             </div>
 
@@ -59,7 +59,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -68,12 +68,53 @@ const formData = ref({
     parentCategory: '',
     description: '',
     status: true
+});
+
+const categories = ref([]);
+
+onMounted( async() => {
+    try {
+        const res = await fetch('http://localhost:3000/api/categories');
+        if(!res.ok){
+            throw new Error('Network response was not ok');
+        } 
+        const data = await res.json();
+        categories.value = data
+    } catch (error) {
+        console.error(error);
+    }
 })
 
-const handleSubmit = () => {
-    // Xử lý submit form ở đây
-    console.log('Form data:', formData.value)
-}
+const handleSubmit = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/api/categories', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: formData.value.name,
+        parent_id: formData.value.parentCategory || null, // tùy API backend
+        description: formData.value.description,
+        status: formData.value.status ? 'active' : 'inactive'
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Thêm danh mục thất bại');
+    }
+
+    const result = await response.json();
+    console.log('Thêm danh mục thành công:', result);
+
+    // Sau khi thêm thành công:
+    resetForm();
+    router.push('/products/categories'); // hoặc đóng form, tùy bạn
+
+  } catch (error) {
+    console.error(error);
+    alert('Có lỗi xảy ra khi thêm danh mục');
+  }
+};
+
 
 const resetForm = () => {
     formData.value = {
