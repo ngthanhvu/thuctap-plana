@@ -4,13 +4,13 @@
             <h1 class="text-3xl font-bold text-gray-900 mb-2">Quản lý danh mục</h1>
             <p class="text-gray-600">Quản lý danh mục sản phẩm và danh mục phụ của bạn</p>
         </div>
-        <button @click="addCategory"
+        <router-link to="/products/categories/create"
             class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
             Thêm danh mục mới
-        </button>
+        </router-link>
     </div>
 
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 mb-3">
@@ -34,6 +34,9 @@
                 <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
                     <tr>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                            #
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                             Danh mục
                         </th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
@@ -50,6 +53,9 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     <tr v-for="category in filteredCategories" :key="category.id"
                         class="hover:bg-gray-50 transition-colors duration-150">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">{{ category.id }}</div>
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm font-medium text-gray-900">{{ category.name }}</div>
                         </td>
