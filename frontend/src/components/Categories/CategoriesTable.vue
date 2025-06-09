@@ -34,47 +34,47 @@
                 <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
                     <tr>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                            Category Name
+                            Danh mục
                         </th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                            Parent Category
+                            Danh mục cha
                         </th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                            Status
+                            Trạng thái
                         </th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                            Actions
+                            Hành động
                         </th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    <tr v-for="product in filteredProducts" :key="product.id"
+                    <tr v-for="category in filteredCategories" :key="category.id"
                         class="hover:bg-gray-50 transition-colors duration-150">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900">{{ product.name }}</div>
+                            <div class="text-sm font-medium text-gray-900">{{ category.name }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">{{ product.category }}</div>
+                            <div class="text-sm text-gray-900">{{ getParendCategoryName(category.parent_id) }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span :class="[
                                 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
-                                product.status === 'active'
+                                category.status === 'active'
                                     ? 'bg-green-100 text-green-800'
                                     : 'bg-yellow-100 text-yellow-800'
                             ]">
                                 <span :class="[
                                     'w-1.5 h-1.5 mr-1.5 rounded-full',
-                                    product.status === 'active'
+                                    category.status === 'active'
                                         ? 'bg-green-400'
                                         : 'bg-yellow-400'
                                 ]"></span>
-                                {{ product.status === 'active' ? 'Active' : 'Out of Stock' }}
+                                {{ category.status === 'active' ? 'Active' : 'Out of Stock' }}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <div class="flex items-center space-x-3">
-                                <button @click="editCategory(product)"
+                                <button @click="editCategory(category)"
                                     class="inline-flex items-center p-1.5 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-colors duration-150"
                                     title="Edit Category">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -83,7 +83,7 @@
                                         </path>
                                     </svg>
                                 </button>
-                                <button @click="deleteCategory(product.id)"
+                                <button @click="deleteCategory(category.id)"
                                     class="inline-flex items-center p-1.5 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors duration-150"
                                     title="Delete Category">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,19 +105,25 @@
 import { ref, computed } from 'vue'
 
 const props = defineProps({
-    products: {
+    categories: {
         type: Array,
         required: true
     }
-})
+});
+
+const getParendCategoryName = (parentId) => {
+    const parentCategory = props.categories.find(category => category.id === parentId)
+    return parentCategory ? parentCategory.name : 'N/A'
+}
+
 
 const emit = defineEmits(['add-category', 'edit-category', 'delete-category'])
 
 const searchQuery = ref('')
 
-const filteredProducts = computed(() => {
-    if (!searchQuery.value) return props.products
-    return props.products.filter(product =>
+const filteredCategories = computed(() => {
+    if (!searchQuery.value) return props.categories
+    return props.categories.filter(product =>
         product.name.toLowerCase().includes(searchQuery.value.toLowerCase())
     )
 })
@@ -140,6 +146,9 @@ const formatPrice = (price) => {
         currency: 'VND'
     }).format(price)
 }
+
+
+
 </script>
 
 <style scoped>

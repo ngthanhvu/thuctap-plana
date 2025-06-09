@@ -5,6 +5,7 @@ import ProductList from '../views/products/ProductList.vue'
 import ProductCreate from '../views/products/ProductCreate.vue'
 import CategoriesCreate from '../views/categories/CategoriesCreate.vue'
 import CategoriesList from '../views/categories/CategoriesList.vue'
+import CategoriesEdit from '../views/categories/CategoriesEdit.vue'
 import BrandList from '../views/brands/BrandList.vue'
 import BrandCreate from '../views/brands/BrandCreate.vue'
 import CustomerList from '../views/customers/CustomerList.vue'
@@ -63,6 +64,14 @@ const routes = [
                 component: CategoriesList,
                 meta: {
                     title: 'Danh sách danh mục'
+                }
+            },
+            {
+                path: 'products/categories/edit/:id',
+                name: 'CategoriesEdit',
+                component: CategoriesEdit,
+                meta: {
+                    title: 'Cập nhật danh mục'
                 }
             },
             {
