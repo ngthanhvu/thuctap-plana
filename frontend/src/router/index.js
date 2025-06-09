@@ -72,6 +72,13 @@ const routes = [
                 meta: {
                     title: 'Danh sách thương hiệu'
                 }
+            }, {
+                path: 'products/brands/create',
+                name: 'BrandCreate',
+                component: BrandCreate,
+                meta: {
+                    title: 'Thêm thương hiệu'
+                }
             },
             {
                 path: 'products/brands/create',
