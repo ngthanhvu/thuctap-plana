@@ -42,9 +42,9 @@
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                             Danh mục cha
                         </th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        <!-- <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                             Trạng thái
-                        </th>
+                        </th> -->
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                             Hành động
                         </th>
@@ -62,7 +62,7 @@
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-gray-900">{{ getParendCategoryName(category.parent_id) }}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <!-- <td class="px-6 py-4 whitespace-nowrap">
                             <span :class="[
                                 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
                                 category.status === 'active'
@@ -77,7 +77,7 @@
                                 ]"></span>
                                 {{ category.status === 'active' ? 'Active' : 'Out of Stock' }}
                             </span>
-                        </td>
+                        </td> -->
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <div class="flex items-center space-x-3">
                                 <button @click="editCategory(category)"
