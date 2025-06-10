@@ -1,12 +1,15 @@
 <template>
-    <CategoriesTable :categories="categories" @delete-category="deleteCategory" />
+    <CategoriesTable :categories="categories" @delete-category="deleteCategory" @edit-category="editCategory" />
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import CategoriesTable from './CategoriesTable.vue';
+import { useRouter } from 'vue-router'
 
-const categories = ref('')
+const router = useRouter()
+
+const categories = ref([]);
 
 onMounted(async () => {
     try {
@@ -42,6 +45,11 @@ const deleteCategory = async (categoryId) => {
         console.error(err)
         message.value = 'Xóa thất bại, vui lòng thử lại.'
     }
+}
+
+// routeEdit 
+const editCategory = (category) => {
+  router.push(`/products/categories/edit/${category.id}`)
 }
 
 </script>
