@@ -101,6 +101,9 @@
                             </div>
                         </td>
                     </tr>
+                    <tr v-if="filteredCategories.length === 0">
+                        <td colspan="5" class="text-center py-4 text-gray-500">Không có dữ liệu</td>
+                    </tr>
                 </tbody>
             </table>
         </div>

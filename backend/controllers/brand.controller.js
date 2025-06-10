@@ -1,151 +1,132 @@
 const db = require('../models');
 const Brand = db.Brand;
 const fs = require('fs');
+const multer = require('multer');
 const path = require('path');
-const cache = require('../services/cache.service'); // ❌ Tạm thời comment Redis
 
-const formatBrand = (brandInstance) => {
-    const { createdAt, updatedAt, created_at, updated_at, ...raw } = brandInstance.toJSON();
-    return {
-        ...raw,
-        image_url: raw.image ? `/uploads/${raw.image}` : null
-    };
-};
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/brands')
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + path.extname(file.originalname))
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    fileFilter: function (req, file, cb) {
+        if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+            return cb(new Error('Chỉ chấp nhận file ảnh!'), false);
+        }
+        cb(null, true);
+    }
+}).single('image');
 
 exports.getAll = async (req, res) => {
     try {
-        const cacheKey = 'brands:all';
-        const cached = await cache.get(cacheKey);
-        if (cached) return res.json(cached);
+        const brands = await Brand.findAll();
 
-        const brands = await Brand.findAll({ order: [['created_at', 'DESC']] });
-        const result = brands.map(formatBrand);
+        const host = req.protocol + '://' + req.get('host');
+        const result = brands.map(brand => {
+            const { id, name, description, image } = brand.toJSON();
+            return {
+                id,
+                name,
+                description,
+                image_url: image ? `${host}/${image.replace(/\\/g, '/')}` : null
+            };
+        });
 
-        await cache.set(cacheKey, result, 1800);
-        res.json(result);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };
+
 
 exports.getById = async (req, res) => {
     try {
         const brand = await Brand.findByPk(req.params.id);
-        if (!brand) return res.status(404).json({ message: 'Brand not found' });
 
-        res.json(formatBrand(brand));
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+        const host = req.protocol + '://' + req.get('host');
+        const result = {
+            id: brand.id,
+            name: brand.name,
+            description: brand.description,
+            image_url: brand.image ? `${host}/${brand.image.replace(/\\/g, '/')}` : null
+        };
+
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };
 
 exports.create = async (req, res) => {
-    try {
-        if (!req.body.name || req.body.name.trim() === '') {
-            return res.status(400).json({ message: 'Name is required' });
+    upload(req, res, async function (err) {
+        if (err) {
+            return res.status(400).json({ message: err.message });
         }
 
-        let image = null;
-        if (req.file) {
-            const uploadsDir = path.join(__dirname, '../uploads');
-            if (!fs.existsSync(uploadsDir)) {
-                fs.mkdirSync(uploadsDir, { recursive: true });
-            }
+        try {
+            const brandData = {
+                name: req.body.name,
+                description: req.body.description,
+                image: req.file ? req.file.path : null
+            };
 
-            const timestamp = Date.now();
-            const ext = path.extname(req.file.originalname);
-            image = `brand_${timestamp}${ext}`;
-            fs.writeFileSync(path.join(uploadsDir, image), req.file.buffer);
+            const brand = await Brand.create(brandData);
+            res.status(201).json(brand);
+        } catch (error) {
+            res.status(500).json({ message: error.message });
         }
-
-        const brand = await Brand.create({
-            name: req.body.name.trim(),
-            description: req.body.description?.trim() || null,
-            image
-        });
-
-        await cache.del('brands:all');
-        res.status(201).json(formatBrand(brand));
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
+    });
 };
 
 exports.update = async (req, res) => {
-    try {
-        const brand = await Brand.findByPk(req.params.id);
-        if (!brand) return res.status(404).json({ message: 'Brand not found' });
-
-        if (req.body.name !== undefined && req.body.name.trim() === '') {
-            return res.status(400).json({ message: 'Name cannot be empty' });
+    upload(req, res, async function (err) {
+        if (err) {
+            return res.status(400).json({ message: err.message });
         }
 
-        let newImage = brand.image;
-
-        if (req.file) {
-            const uploadsDir = path.join(__dirname, '../uploads');
-            if (!fs.existsSync(uploadsDir)) {
-                fs.mkdirSync(uploadsDir, { recursive: true });
+        try {
+            const brand = await Brand.findByPk(req.params.id);
+            if (!brand) {
+                return res.status(404).json({ message: 'Không tìm thấy brand' });
             }
 
-            const timestamp = Date.now();
-            const ext = path.extname(req.file.originalname);
-            newImage = `brand_${timestamp}${ext}`;
-            fs.writeFileSync(path.join(uploadsDir, newImage), req.file.buffer);
+            const updateData = {
+                name: req.body.name,
+                description: req.body.description
+            };
 
-            if (brand.image) {
-                const oldPath = path.join(uploadsDir, brand.image);
-                if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+            if (req.file) {
+                updateData.image = req.file.path;
             }
+
+            await brand.update(updateData);
+            res.status(200).json(brand);
+        } catch (error) {
+            res.status(500).json({ message: error.message });
         }
-
-        await brand.update({
-            name: req.body.name !== undefined ? req.body.name.trim() : brand.name,
-            description: req.body.description !== undefined ? req.body.description?.trim() || null : brand.description,
-            image: newImage
-        });
-
-        await cache.del('brands:all');
-        res.json(formatBrand(brand));
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
+    });
 };
 
 exports.delete = async (req, res) => {
     try {
         const brand = await Brand.findByPk(req.params.id);
-        if (!brand) return res.status(404).json({ message: 'Brand not found' });
+        if (!brand) {
+            return res.status(404).json({ message: 'Không tìm thấy brand' });
+        }
 
-        if (brand.image) {
-            const filePath = path.join(__dirname, '../uploads', brand.image);
-            if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+        if (brand.image && fs.existsSync(brand.image)) {
+            fs.unlinkSync(brand.image);
         }
 
         await brand.destroy();
-        await cache.del('brands:all');
-
-        res.json({ message: 'Brand deleted successfully' });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-};
-
-exports.deleteImage = async (req, res) => {
-    try {
-        const brand = await Brand.findByPk(req.params.id);
-        if (!brand) return res.status(404).json({ message: 'Brand not found' });
-
-        if (!brand.image) return res.status(404).json({ message: 'No image to delete' });
-
-        const filePath = path.join(__dirname, '../uploads', brand.image);
-        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-
-        await brand.update({ image: null });
-        await cache.del('brands:all');
-
-        res.json({ message: 'Image deleted successfully' });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(200).json({ message: 'Brand đã được xóa thành công' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };

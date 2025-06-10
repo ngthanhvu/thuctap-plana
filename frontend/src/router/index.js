@@ -8,6 +8,7 @@ import CategoriesList from '../views/categories/CategoriesList.vue'
 import CategoriesEdit from '../views/categories/CategoriesEdit.vue'
 import BrandList from '../views/brands/BrandList.vue'
 import BrandCreate from '../views/brands/BrandCreate.vue'
+import BrandEdit from '../views/brands/BrandEdit.vue'
 import CustomerList from '../views/customers/CustomerList.vue'
 import InventoryList from '../views/inventory/InventoryList.vue'
 import InventoryImport from '../views/inventory/Import.vue'
@@ -95,6 +96,13 @@ const routes = [
                 component: BrandCreate,
                 meta: {
                     title: 'Thêm thương hiệu'
+                }
+            }, {
+                path: 'products/brands/edit/:id',
+                name: 'BrandEdit',
+                component: BrandEdit,
+                meta: {
+                    title: 'Cập nhật thương hiệu'
                 }
             },
             {

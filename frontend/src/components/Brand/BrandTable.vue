@@ -37,13 +37,13 @@
                             ID
                         </th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                            Brand Name
+                            Tên thương hiệu
                         </th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                             Logo
                         </th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                            Actions
+                            Hành động
                         </th>
                     </tr>
                 </thead>
@@ -58,7 +58,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
-                                <img v-if="brand.logo" :src="brand.logo" :alt="brand.name"
+                                <img v-if="brand.image_url" :src="brand.image_url" :alt="brand.name"
                                     class="w-10 h-10 rounded-lg object-cover border border-gray-200">
                                 <div v-else class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
                                     <span class="text-sm text-gray-500">No logo</span>
@@ -76,7 +76,7 @@
                                         </path>
                                     </svg>
                                 </button>
-                                <button @click="deleteBrand(brand.id)"
+                                <button @click="handleDelete(brand.id)"
                                     class="inline-flex items-center p-1.5 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors duration-150"
                                     title="Delete Brand">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -88,6 +88,13 @@
                             </div>
                         </td>
                     </tr>
+                    <tr v-if="filteredBrands.length === 0">
+                        <td colspan="4" class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex justify-center text-center">
+                                <span class="text-sm font-medium text-gray-500">Không có thương hiệu nào</span>
+                            </div>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -95,46 +102,65 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useBrand } from '../../composables/useBrand'
+import { useRouter } from 'vue-router'
+import Swal from 'sweetalert2'
 
-// Props
-const props = defineProps({
-    brands: {
-        type: Array,
-        default: () => []
-    }
-})
+const { getBrands, deleteBrand } = useBrand()
+const router = useRouter()
 
-// Emits
-const emit = defineEmits(['add-brand', 'edit-brand', 'delete-brand'])
-
-// Reactive data
 const searchQuery = ref('')
+const brands = ref([])
 
-// Computed
 const filteredBrands = computed(() => {
-    if (!searchQuery.value) return props.brands
-    return props.brands.filter(brand =>
+    if (!searchQuery.value) return brands.value
+    return brands.value.filter(brand =>
         brand.name.toLowerCase().includes(searchQuery.value.toLowerCase())
     )
 })
 
-// Methods
-const addBrand = () => {
-    emit('add-brand')
+const fetchBrands = async () => {
+    try {
+        const response = await getBrands()
+        brands.value = response
+    } catch (error) {
+        console.error('Error fetching brands:', error)
+    }
 }
 
 const editBrand = (brand) => {
-    emit('edit-brand', brand)
+    router.push(`/products/brands/edit/${brand.id}`)
 }
 
-const deleteBrand = (brandId) => {
-    emit('delete-brand', brandId)
+const handleDelete = async (brandId) => {
+    const result = await Swal.fire({
+        title: 'Bạn có chắc muốn xoá?',
+        text: 'Thao tác này không thể hoàn tác!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e3342f',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Xoá',
+        cancelButtonText: 'Huỷ'
+    })
+
+    if (result.isConfirmed) {
+        try {
+            await deleteBrand(brandId)
+            fetchBrands()
+        } catch (error) {
+            Swal.fire('Lỗi!', 'Không thể xoá thương hiệu.', 'error')
+        }
+    }
 }
+
+onMounted(() => {
+    fetchBrands()
+})
 </script>
 
 <style scoped>
-/* Custom Scrollbar */
 .scrollbar-thin::-webkit-scrollbar {
     height: 6px;
 }

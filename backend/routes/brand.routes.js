@@ -1,13 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const controller = require('../controllers/brand.controller');
-const multer = require('multer');
-const upload = multer(); // sử dụng memoryStorage để đọc file từ req.file.buffer
+const brandController = require('../controllers/brand.controller');
 
-router.get('/', controller.getAll);
-router.get('/:id', controller.getById);
-router.post('/', upload.single('image'), controller.create); // 👈 Sửa lại tên field
-router.put('/:id', upload.single('image'), controller.update); // 👈
-router.delete('/:id', controller.delete);
+router.get('/', brandController.getAll);
+router.get('/:id', brandController.getById);
+router.post('/', brandController.create);
+router.put('/:id', brandController.update);
+router.delete('/:id', brandController.delete);
 
-module.exports = router;
+module.exports = router; 
