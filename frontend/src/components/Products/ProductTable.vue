@@ -66,6 +66,9 @@
                 <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
                     <tr>
                         <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                            #
+                        </th>
+                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
                             Sản phẩm
                         </th>
                         <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
@@ -102,6 +105,9 @@
                     </tr>
                     <tr v-for="product in filteredProducts" :key="product.id"
                         class="hover:bg-gray-50 transition-colors duration-150">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900 font-semibold">#{{ product.id }}</div>
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center gap-3">
                                 <div class="h-10 w-10 flex-shrink-0">
@@ -187,6 +193,7 @@ import { useRouter } from 'vue-router'
 import Barcode from './Barcode.vue'
 import { useBrand } from '../../composables/useBrand'
 import { useCategory } from '../../composables/useCategory'
+import Swal from 'sweetalert2'
 
 const router = useRouter()
 const { products, getProducts, deleteProduct, loading, error } = useProduct()
@@ -235,12 +242,25 @@ const editProduct = (product) => {
 }
 
 const confirmDeleteProduct = async (productId) => {
-    if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) {
+    const result = await Swal.fire({
+        title: 'Xoá sản phẩm?',
+        text: 'Hành động này không thể hoàn tác!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Xoá',
+        cancelButtonText: 'Huỷ'
+    })
+
+    if (result.isConfirmed) {
         try {
             await deleteProduct(productId)
-            await loadProducts() // Reload danh sách sau khi xóa
+            await loadProducts()
+            Swal.fire('Đã xoá!', 'Sản phẩm đã được xoá thành công.', 'success')
         } catch (err) {
             console.error('Error deleting product:', err)
+            Swal.fire('Lỗi', 'Không thể xoá sản phẩm.', 'error')
         }
     }
 }
