@@ -69,7 +69,7 @@ export const useProduct = () => {
 
             const response = await axios.put(`/api/products/${id}`, data)
             notyf.success('Cập nhật sản phẩm thành công')
-            router.push('/products')
+            router.push('/products/list')
             return response.data
         } catch (err) {
             error.value = err.response?.data?.message || 'Cập nhật sản phẩm thất bại'

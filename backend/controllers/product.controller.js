@@ -5,16 +5,14 @@ const multer = require('multer');
 const path = require('path');
 const cacheService = require('../services/cache.service');
 
-// Cache keys và TTL
 const CACHE_KEYS = {
     ALL_PRODUCTS: 'products:all',
     PRODUCT_BY_ID: (id) => `products:${id}`,
     PRODUCTS_BY_BRAND: (brand) => `products:brand:${brand}`,
     PRODUCTS_BY_CATEGORY: (category) => `products:category:${category}`
 };
-const CACHE_TTL = 3600; // 1 giờ
+const CACHE_TTL = 3600;
 
-// Multer configuration cho upload hình ảnh
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         const uploadPath = path.join(__dirname, '..', 'uploads', 'products');
@@ -42,7 +40,6 @@ const upload = multer({
     }
 }).single('image');
 
-// Utility function để xóa cache
 const clearCache = async (productId = null, brand = null, category = null) => {
     try {
         await cacheService.del(CACHE_KEYS.ALL_PRODUCTS);

@@ -3,6 +3,7 @@ import DefaultLayout from '../layouts/DefaultLayout.vue'
 import LoginView from '../views/auth/Login.vue'
 import ProductList from '../views/products/ProductList.vue'
 import ProductCreate from '../views/products/ProductCreate.vue'
+import ProductEdit from '../views/products/ProductEdit.vue'
 import CategoriesCreate from '../views/categories/CategoriesCreate.vue'
 import CategoriesList from '../views/categories/CategoriesList.vue'
 import CategoriesEdit from '../views/categories/CategoriesEdit.vue'
@@ -17,9 +18,8 @@ import StaffList from '../views/staff/StaffList.vue'
 import StaffCreate from '../views/staff/StaffCreate.vue'
 import Dashboard from '../views/dashboard/Dashboard.vue'
 import Pos from '../views/POS/Sell.vue'
-import { auth, admin } from './middleware/auth'
 
-import Test from '../views/Test.vue'
+import { auth, admin } from './middleware/auth'
 
 const routes = [
     {
@@ -49,6 +49,14 @@ const routes = [
                 component: ProductCreate,
                 meta: {
                     title: 'Thêm sản phẩm'
+                }
+            },
+            {
+                path: 'products/edit/:id',
+                name: 'ProductEdit',
+                component: ProductEdit,
+                meta: {
+                    title: 'Cập nhật sản phẩm'
                 }
             },
             {
@@ -163,14 +171,6 @@ const routes = [
         component: LoginView,
         meta: {
             title: 'Đăng nhập'
-        }
-    },
-    {
-        path: '/test',
-        name: 'Test',
-        component: Test,
-        meta: {
-            title: 'Test'
         }
     },
     {

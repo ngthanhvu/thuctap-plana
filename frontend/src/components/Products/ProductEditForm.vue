@@ -1,15 +1,16 @@
 <template>
     <div class="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow">
-        <h2 class="text-2xl font-semibold mb-4">Thêm sản phẩm mới</h2>
-
-        <!-- Thông tin chính -->
-        <div class="space-y-6">
+        <h2 class="text-2xl font-semibold mb-4">Sửa sản phẩm</h2>
+        <div v-if="loadingProduct" class="flex justify-center items-center py-8">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+            <span class="ml-2 text-gray-600">Đang tải dữ liệu...</span>
+        </div>
+        <div v-else class="space-y-6">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Tên sản phẩm</label>
                 <input v-model="form.name" type="text" placeholder="Nhập tên sản phẩm"
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500" />
             </div>
-
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Thương hiệu</label>
@@ -25,18 +26,15 @@
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">
                         <option value="" disabled>-- Chọn danh mục --</option>
                         <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name
-                            }}</option>
+                        }}</option>
                     </select>
                 </div>
             </div>
-
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Mô tả</label>
                 <textarea v-model="form.description" rows="3" placeholder="Nhập mô tả sản phẩm"
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"></textarea>
             </div>
-
-            <!-- Thông tin sản phẩm -->
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">SKU</label>
@@ -82,10 +80,19 @@
                     </select>
                 </div>
             </div>
-
-            <!-- Ảnh sản phẩm -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Ảnh sản phẩm</label>
+                <div v-if="currentImageUrl && !form.image" class="mb-4">
+                    <p class="text-sm text-gray-600 mb-2">Ảnh hiện tại:</p>
+                    <div class="relative inline-block">
+                        <img :src="currentImageUrl" alt="Current product image"
+                            class="h-32 w-32 object-cover rounded-lg border">
+                        <button type="button" @click="removeCurrentImage"
+                            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600">
+                            ×
+                        </button>
+                    </div>
+                </div>
                 <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
                     <div class="space-y-1 text-center">
                         <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none"
@@ -97,7 +104,7 @@
                         <div class="flex text-sm text-gray-600 justify-center">
                             <label for="image"
                                 class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
-                                <span>Tải ảnh lên</span>
+                                <span>{{ currentImageUrl && !form.image ? 'Thay đổi ảnh' : 'Tải ảnh lên' }}</span>
                                 <input id="image" name="image" type="file" class="sr-only" @change="handleImageUpload">
                             </label>
                             <p class="pl-1">hoặc kéo thả</p>
@@ -106,17 +113,25 @@
                     </div>
                 </div>
                 <div v-if="form.image" class="mt-2">
-                    <img :src="imagePreview" alt="Preview" class="h-32 w-32 object-cover rounded-lg">
+                    <p class="text-sm text-gray-600 mb-2">Ảnh mới:</p>
+                    <div class="relative inline-block">
+                        <img :src="imagePreview" alt="New image preview"
+                            class="h-32 w-32 object-cover rounded-lg border">
+                        <button type="button" @click="removeNewImage"
+                            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600">
+                            ×
+                        </button>
+                    </div>
                 </div>
             </div>
-
-            <!-- Submit -->
             <div class="mt-6 flex justify-end space-x-3">
-                <button type="button" @click="resetForm"
-                    class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Hủy</button>
+                <button type="button" @click="$router.go(-1)"
+                    class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Hủy
+                </button>
                 <button @click="submitForm" type="submit" :disabled="loading"
                     class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50">
-                    {{ loading ? 'Đang lưu...' : 'Lưu sản phẩm' }}
+                    {{ loading ? 'Đang cập nhật...' : 'Cập nhật sản phẩm' }}
                 </button>
             </div>
         </div>
@@ -125,13 +140,21 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useProduct } from '../../composables/useProduct'
 import { useCategory } from '../../composables/useCategory'
 import { useBrand } from '../../composables/useBrand'
+import Swal from 'sweetalert2';
 
-const { createProduct, loading } = useProduct()
+const route = useRoute()
+const router = useRouter()
+const { getProductById, updateProduct, loading } = useProduct()
 const { getCategories, categories } = useCategory()
 const { getBrands, brands } = useBrand()
+
+const loadingProduct = ref(true)
+const currentImageUrl = ref(null)
+const removeImage = ref(false)
 
 const form = ref({
     name: '',
@@ -176,25 +199,55 @@ const loadCategories = async () => {
     }
 }
 
+const loadProduct = async () => {
+    try {
+        loadingProduct.value = true
+        const productId = route.params.id
+        const product = await getProductById(productId)
+
+        if (product) {
+            form.value = {
+                name: product.name || '',
+                description: product.description || '',
+                brand_id: product.brand_id || '',
+                category_id: product.category_id || '',
+                sku: product.sku || '',
+                barcode: product.barcode || '',
+                price: product.price || '',
+                cost: product.cost || '',
+                status: product.status || 'active',
+                image: null
+            }
+
+            currentImageUrl.value = product.image_url
+        }
+    } catch (error) {
+        console.error('Error loading product:', error)
+        Swal.fire({ title: 'Không thể tải thông tin sản phẩm', icon: 'error', confirmButtonText: 'OK' })
+        router.go(-1)
+    } finally {
+        loadingProduct.value = false
+    }
+}
+
 const handleImageUpload = (e) => {
     const file = e.target.files[0]
     if (file) {
         form.value.image = file
+        removeImage.value = false
     }
 }
 
-const resetForm = () => {
-    form.value = {
-        name: '',
-        description: '',
-        brand_id: '',
-        category_id: '',
-        sku: '',
-        barcode: '',
-        price: '',
-        cost: '',
-        status: 'active',
-        image: null
+const removeCurrentImage = () => {
+    currentImageUrl.value = null
+    removeImage.value = true
+}
+
+const removeNewImage = () => {
+    form.value.image = null
+    const fileInput = document.getElementById('image')
+    if (fileInput) {
+        fileInput.value = ''
     }
 }
 
@@ -213,21 +266,25 @@ const submitForm = async () => {
 
         if (form.value.image) {
             formData.append('image', form.value.image)
+        } else if (removeImage.value) {
+            formData.append('removeImage', 'true')
         }
 
-        const response = await createProduct(formData)
-
-        if (response) {
-            resetForm()
-        }
-
+        const productId = route.params.id
+        await updateProduct(productId, formData)
     } catch (error) {
         console.error('Error submitting form:', error)
+        alert('Có lỗi xảy ra khi cập nhật sản phẩm')
     }
 }
 
-onMounted(() => {
-    loadBrands()
-    loadCategories()
+onMounted(async () => {
+    await Promise.all([
+        loadBrands(),
+        loadCategories(),
+        loadProduct()
+    ])
 })
 </script>
+
+<style></style>
