@@ -11,7 +11,7 @@
                 <div v-for="item in cart" :key="item.id" class="flex items-start border-b pb-3 space-x-2">
                     <div
                         class="w-10 h-10 bg-gradient-to-br from-amber-100 to-amber-200 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <span class="text-lg">{{ item.image }}</span>
+                        <img :src="`http://localhost:3000/${item.image}`" :alt="(item.image)" alt="Product" class="w-full h-full object-cover rounded-lg" />
                     </div>
                     <div class="flex-1 min-w-0">
                         <h3 class="font-medium text-sm truncate">{{ item.name }}</h3>
