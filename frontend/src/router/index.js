@@ -13,6 +13,7 @@ import BrandEdit from '../views/brands/BrandEdit.vue'
 import CustomerList from '../views/customers/CustomerList.vue'
 import InventoryList from '../views/inventory/InventoryList.vue'
 import InventoryImport from '../views/inventory/Import.vue'
+import Invoice from '../views/inventory/invoice.vue'
 import OrderList from '../views/orders/OrderList.vue'
 import StaffList from '../views/staff/StaffList.vue'
 import StaffCreate from '../views/staff/StaffCreate.vue'
@@ -135,6 +136,13 @@ const routes = [
                 component: InventoryImport,
                 meta: {
                     title: 'Nhập kho'
+                }
+            }, {
+                path: 'inventory/invoice',
+                name: 'Invoice',
+                component: Invoice,
+                meta: {
+                    title: 'Hóa đơn nhập/xuất kho'
                 }
             },
             {

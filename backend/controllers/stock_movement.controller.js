@@ -47,7 +47,6 @@ exports.getAll = async (req, res) => {
     }
 };
 
-// Lấy phiếu theo ID
 exports.getById = async (req, res) => {
     try {
         const id = req.params.id;

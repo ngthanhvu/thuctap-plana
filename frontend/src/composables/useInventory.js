@@ -85,6 +85,25 @@ export const useInventory = () => {
         }
     }
 
+    const getStockMovementById = async (id) => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/stock-movements/${id}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            
+            if (!response.ok) {
+                throw new Error('Không thể tải thông tin phiếu')
+            }
+            
+            return await response.json()
+        } catch (error) {
+            console.error('Error fetching stock movement:', error)
+            throw error
+        }
+    }
+
     return {
         inventories,
         stockMovements,
@@ -93,6 +112,7 @@ export const useInventory = () => {
         createStockMovement,
         getStockMovements,
         error,
-        loading
+        loading,
+        getStockMovementById
     }
 }
