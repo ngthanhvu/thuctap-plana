@@ -1,5 +1,9 @@
 import { ref, computed, provide, inject, onMounted, watch } from 'vue';
 import axios from "axios";
+import { useAuth } from './useAuth';
+
+// Thiết lập baseURL từ biến môi trường
+axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 
 const POS_STORE_KEY = Symbol("pos-store");
 
@@ -12,6 +16,8 @@ export function usePosStore() {
 }
 
 export function createPosStore() {
+  const { user: authUser, isAuthenticated } = useAuth();
+  
   const categories = ref([]);
   const products = ref([]);
   const customers = ref([]);
@@ -20,19 +26,18 @@ export function createPosStore() {
   const selectedCategory = ref(1);
   const selectedCustomer = ref(null);
   const currentSession = ref(null);
-  const currentUser = ref({ id: 1, name: 'Nhân viên', role: 'admin' });
+  const currentUser = computed(() => authUser.value || { id: 1, name: 'Nhân viên', role: 'admin' });
   const salesReport = ref(null);
   const paymentQR = ref(null);
   const orders = ref([]);
   const currentView = ref('pos'); // pos, orders, report, inventory, teams, settings
 
-  // Khôi phục session từ localStorage khi khởi tạo
   function restoreSession() {
     try {
       const savedSession = localStorage.getItem('pos_session');
       const savedCart = localStorage.getItem('pos_cart');
       const savedCustomer = localStorage.getItem('pos_selected_customer');
-      
+
       if (savedSession) {
         currentSession.value = JSON.parse(savedSession);
       }
@@ -47,7 +52,6 @@ export function createPosStore() {
     }
   }
 
-  // Lưu session vào localStorage
   function saveSession() {
     try {
       if (currentSession.value) {
@@ -60,7 +64,6 @@ export function createPosStore() {
     }
   }
 
-  // Lưu cart vào localStorage
   function saveCart() {
     try {
       localStorage.setItem('pos_cart', JSON.stringify(cart.value));
@@ -69,7 +72,6 @@ export function createPosStore() {
     }
   }
 
-  // Lưu customer đã chọn
   function saveSelectedCustomer() {
     try {
       if (selectedCustomer.value) {
@@ -82,15 +84,13 @@ export function createPosStore() {
     }
   }
 
-  // Watch để tự động lưu khi có thay đổi
   watch(currentSession, saveSession, { deep: true });
   watch(cart, saveCart, { deep: true });
   watch(selectedCustomer, saveSelectedCustomer, { deep: true });
 
-  // Fetch functions
   async function fetchCategories() {
     try {
-      const res = await axios.get("http://localhost:3000/api/categories");
+      const res = await axios.get("/api/categories");
       categories.value = res.data;
     } catch (error) {
       console.error("Lỗi khi fetch categories:", error);
@@ -99,7 +99,7 @@ export function createPosStore() {
 
   async function fetchProducts() {
     try {
-      const res = await axios.get("http://localhost:3000/api/products");
+      const res = await axios.get("/api/products");
       products.value = res.data;
     } catch (error) {
       console.error("Lỗi khi fetch products:", error);
@@ -108,17 +108,16 @@ export function createPosStore() {
 
   async function fetchCustomers() {
     try {
-      const res = await axios.get("http://localhost:3000/api/customers");
+      const res = await axios.get("/api/customers");
       customers.value = res.data;
     } catch (error) {
       console.error("Lỗi khi fetch customers:", error);
     }
   }
 
-  // Fetch orders
   async function fetchOrders() {
     try {
-      const res = await axios.get('http://localhost:3000/api/pos/orders');
+      const res = await axios.get('/api/pos/orders');
       orders.value = res.data;
     } catch (error) {
       console.error("Lỗi khi fetch orders:", error);
@@ -127,7 +126,7 @@ export function createPosStore() {
 
   async function searchCustomers(query) {
     try {
-      const res = await axios.get(`http://localhost:3000/api/customers/search?query=${query}`);
+      const res = await axios.get(`/api/customers/search?query=${query}`);
       return res.data;
     } catch (error) {
       console.error("Lỗi khi search customers:", error);
@@ -135,10 +134,9 @@ export function createPosStore() {
     }
   }
 
-  // POS Session functions
   async function startPosSession(openingCash = 0) {
     try {
-      const res = await axios.post('http://localhost:3000/api/pos/session/start', {
+      const res = await axios.post('/api/pos/session/start', {
         staff_id: currentUser.value.id,
         opening_cash: openingCash
       });
@@ -152,12 +150,11 @@ export function createPosStore() {
 
   async function endPosSession(closingCash) {
     try {
-      const res = await axios.post('http://localhost:3000/api/pos/session/end', {
+      const res = await axios.post('/api/pos/session/end', {
         session_id: currentSession.value.id,
         closing_cash: closingCash
       });
       currentSession.value = null;
-      // Xóa dữ liệu localStorage khi kết thúc session
       localStorage.removeItem('pos_session');
       localStorage.removeItem('pos_cart');
       localStorage.removeItem('pos_selected_customer');
@@ -168,7 +165,6 @@ export function createPosStore() {
     }
   }
 
-  // Order functions
   async function processPayment(paymentMethod) {
     try {
       if (!currentSession.value) {
@@ -191,10 +187,9 @@ export function createPosStore() {
         payment_method: paymentMethod
       };
 
-      const res = await axios.post('http://localhost:3000/api/pos/orders', orderData);
+      const res = await axios.post('/api/pos/orders', orderData);
       clearCart();
       selectedCustomer.value = null;
-      // Cập nhật danh sách đơn hàng
       await fetchOrders();
       return res.data;
     } catch (error) {
@@ -224,10 +219,9 @@ export function createPosStore() {
         total: cartFinalTotal.value
       };
 
-      const res = await axios.post('http://localhost:3000/api/pos/orders/draft', orderData);
+      const res = await axios.post('/api/pos/orders/draft', orderData);
       clearCart();
       selectedCustomer.value = null;
-      // Cập nhật danh sách đơn hàng
       await fetchOrders();
       return res.data;
     } catch (error) {
@@ -236,13 +230,11 @@ export function createPosStore() {
     }
   }
 
-  // Cập nhật trạng thái đơn hàng
   async function updateOrderStatus(orderId, status) {
     try {
-      const res = await axios.put(`http://localhost:3000/api/pos/orders/${orderId}/status`, {
+      const res = await axios.put(`/api/pos/orders/${orderId}/status`, {
         status: status
       });
-      // Cập nhật danh sách đơn hàng
       await fetchOrders();
       return res.data;
     } catch (error) {
@@ -251,11 +243,9 @@ export function createPosStore() {
     }
   }
 
-  // Hủy đơn hàng
   async function cancelOrder(orderId) {
     try {
-      const res = await axios.delete(`http://localhost:3000/api/pos/orders/${orderId}`);
-      // Cập nhật danh sách đơn hàng
+      const res = await axios.delete(`/api/pos/orders/${orderId}`);
       await fetchOrders();
       return res.data;
     } catch (error) {
@@ -272,7 +262,6 @@ export function createPosStore() {
     fetchOrders();
   });
 
-  // Getters
   const filteredProducts = computed(() => {
     return products.value.filter((product) => {
       const matchesSearch = product.name
@@ -353,11 +342,10 @@ export function createPosStore() {
     currentView.value = view;
   }
 
-  // Thống kê doanh thu
   async function fetchSalesReport(sessionId = null) {
     try {
       const params = sessionId ? `?session_id=${sessionId}` : '';
-      const res = await axios.get(`http://localhost:3000/api/pos/reports/summary${params}`);
+      const res = await axios.get(`/api/pos/reports/summary${params}`);
       salesReport.value = res.data;
       return res.data;
     } catch (error) {
@@ -366,10 +354,9 @@ export function createPosStore() {
     }
   }
 
-  // Tạo QR code thanh toán
   async function generatePaymentQR(amount, orderNumber) {
     try {
-      const res = await axios.post('http://localhost:3000/api/pos/payment/qr', {
+      const res = await axios.post('/api/pos/payment/qr', {
         amount: amount,
         order_number: orderNumber
       });
@@ -381,11 +368,9 @@ export function createPosStore() {
     }
   }
 
-  // Tạo khách hàng mới
   async function createCustomer(customerData) {
     try {
-      const res = await axios.post('http://localhost:3000/api/customers', customerData);
-      // Cập nhật danh sách khách hàng
+      const res = await axios.post('/api/customers', customerData);
       await fetchCustomers();
       return res.data;
     } catch (error) {
@@ -395,7 +380,6 @@ export function createPosStore() {
   }
 
   const store = {
-    // State
     categories,
     products,
     customers,
@@ -409,13 +393,11 @@ export function createPosStore() {
     paymentQR,
     orders,
     currentView,
-    // Computed
     filteredProducts,
     cartTotal,
     cartDiscount,
     cartTax,
     cartFinalTotal,
-    // Actions
     setCategory,
     addToCart,
     removeFromCart,

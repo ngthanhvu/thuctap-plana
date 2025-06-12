@@ -52,7 +52,7 @@ export const useAuth = () => {
                 confirmButtonText: 'OK',
                 timerProgressBar: true,
             }).then(() => {
-                router.push('/');
+                // router.push('/');
             });
             return response.data
         } catch (err) {

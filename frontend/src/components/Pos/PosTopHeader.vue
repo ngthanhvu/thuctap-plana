@@ -105,13 +105,15 @@
             </div>
         </div>
 
-        <div v-if="showSessionModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div v-if="showSessionModal"
+            class="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50">
             <div class="bg-white p-6 rounded-lg w-96">
                 <h3 class="text-lg font-bold text-gray-800 mb-4">Bắt đầu ca làm việc</h3>
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Tiền mặt đầu ca:</label>
                     <input v-model.number="openingCash" type="number"
-                        class="w-full px-3 py-2 border rounded-lg text-gray-800" placeholder="0">
+                        class="w-full px-3 py-2 border border-gray-300 focus:outline-gray-300 rounded-lg text-gray-800"
+                        placeholder="0">
                 </div>
                 <div class="flex space-x-3">
                     <button @click="handleStartSession"
@@ -127,7 +129,7 @@
         </div>
 
         <div v-if="showEndSessionModal"
-            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            class="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50">
             <div class="bg-white p-6 rounded-lg w-96">
                 <h3 class="text-lg font-bold text-gray-800 mb-4">Kết thúc ca làm việc</h3>
                 <div class="mb-4">
@@ -187,6 +189,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { usePosStore } from '../../composables/usePos'
 import PosSalesReport from './PosSalesReport.vue'
+import Swal from 'sweetalert2'
 
 const {
     currentUser,
@@ -238,8 +241,13 @@ async function handleStartSession() {
         await startPosSession(openingCash.value)
         showSessionModal.value = false
         openingCash.value = 0
-        alert('Đã bắt đầu ca làm việc thành công!')
-        // Fetch initial sales report
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: 'Đã bắt đầu ca làm việc thành công!',
+            showConfirmButton: true,
+            timer: 1500
+        })
         if (currentSession.value) {
             await fetchSalesReport(currentSession.value.id)
         }
@@ -253,7 +261,13 @@ async function handleEndSession() {
         await endPosSession(closingCash.value)
         showEndSessionModal.value = false
         closingCash.value = 0
-        alert('Đã kết thúc ca làm việc thành công!')
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: 'Đã kết thúc ca làm việc thành công!',
+            showConfirmButton: true,
+            timer: 1500
+        })
     } catch (error) {
         alert(`Lỗi: ${error.response?.data?.message || error.message}`)
     }
@@ -265,7 +279,6 @@ onMounted(() => {
     updateTime()
     timeInterval = setInterval(updateTime, 1000)
 
-    // Fetch sales report if session is active
     if (currentSession.value) {
         fetchSalesReport(currentSession.value.id)
     }

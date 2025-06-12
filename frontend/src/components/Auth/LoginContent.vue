@@ -88,13 +88,15 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useAuth } from '../../composables/useAuth';
+import { useRouter } from 'vue-router';
 
 const email = ref('');
 const password = ref('');
 const rememberMe = ref(false);
 const showPassword = ref(false);
 
-const { login, error, loading } = useAuth();
+const { login, error, loading, isAdmin } = useAuth();
+const router = useRouter();
 
 const togglePasswordVisibility = () => {
     showPassword.value = !showPassword.value;
@@ -132,7 +134,16 @@ const handleLogin = async () => {
     try {
         saveLoginInfo();
 
-        await login(email.value, password.value);
+        const response = await login(email.value, password.value);
+        
+        // Điều hướng dựa trên vai trò người dùng
+        if (isAdmin()) {
+            // Nếu là admin, chuyển đến trang chính
+            router.push('/');
+        } else {
+            // Nếu không phải admin, chuyển đến trang POS
+            router.push('/pos/sell');
+        }
     } catch (error) {
         console.log('Login error:', error);
     }

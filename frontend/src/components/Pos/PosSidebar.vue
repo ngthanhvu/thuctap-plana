@@ -3,11 +3,11 @@
         <div class="p-4">
             <div class="flex items-center space-x-3">
                 <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
-                    {{ currentUser.name.charAt(0) }}
+                    POS
                 </div>
                 <div>
-                    <div class="font-medium text-gray-900">{{ currentUser.name }}</div>
-                    <div class="text-sm text-gray-500">{{ currentUser.role }}</div>
+                    <div class="font-medium text-gray-900">Bán hàng ( POS )</div>
+                    <div class="text-sm text-gray-500">Trang bán hàng</div>
                 </div>
                 <button class="ml-auto text-gray-400 hover:text-gray-600">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -18,7 +18,6 @@
             </div>
         </div>
 
-        <!-- Navigation -->
         <nav class="flex-1 p-4">
             <div class="space-y-2">
                 <router-link to="/pos/sell" :class="[

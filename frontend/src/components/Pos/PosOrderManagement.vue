@@ -15,7 +15,8 @@
                     <option value="cash">Tiền mặt</option>
                     <option value="card">Thẻ/QR</option>
                 </select>
-                <button @click="refreshOrders" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm">
+                <button @click="refreshOrders"
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm">
                     Làm mới
                 </button>
             </div>
@@ -40,15 +41,14 @@
                         <td class="px-4 py-3 text-sm">{{ order.customer_name || 'Khách lẻ' }}</td>
                         <td class="px-4 py-3 text-sm font-semibold">{{ formatPrice(order.total) }}</td>
                         <td class="px-4 py-3 text-sm">
-                            <span class="px-2 py-1 rounded-full text-xs" 
-                                  :class="order.payment_method === 'cash' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'">
+                            <span class="px-2 py-1 rounded-full text-xs"
+                                :class="order.payment_method === 'cash' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'">
                                 {{ order.payment_method === 'cash' ? 'Tiền mặt' : 'Thẻ/QR' }}
                             </span>
                         </td>
                         <td class="px-4 py-3 text-sm">
                             <select v-model="order.status" @change="handleStatusChange(order.id, order.status)"
-                                    class="px-2 py-1 border rounded text-xs"
-                                    :class="getStatusClass(order.status)">
+                                class="px-2 py-1 border rounded text-xs" :class="getStatusClass(order.status)">
                                 <option value="pending">Chờ xử lý</option>
                                 <option value="processing">Đang xử lý</option>
                                 <option value="completed">Hoàn thành</option>
@@ -58,13 +58,12 @@
                         <td class="px-4 py-3 text-sm text-gray-600">{{ formatDateTime(order.created_at) }}</td>
                         <td class="px-4 py-3 text-sm">
                             <div class="flex space-x-2">
-                                <button @click="viewOrderDetails(order)" 
-                                        class="text-blue-600 hover:text-blue-800 text-xs">
+                                <button @click="viewOrderDetails(order)"
+                                    class="text-blue-600 hover:text-blue-800 text-xs">
                                     Chi tiết
                                 </button>
-                                <button v-if="order.status !== 'cancelled'" 
-                                        @click="handleCancelOrder(order.id)"
-                                        class="text-red-600 hover:text-red-800 text-xs">
+                                <button v-if="order.status !== 'cancelled'" @click="handleCancelOrder(order.id)"
+                                    class="text-red-600 hover:text-red-800 text-xs">
                                     Hủy
                                 </button>
                             </div>
@@ -88,11 +87,13 @@
                         <p><strong>Mã đơn:</strong> {{ selectedOrder.order_number }}</p>
                         <p><strong>Khách hàng:</strong> {{ selectedOrder.customer_name || 'Khách lẻ' }}</p>
                         <p><strong>Thời gian:</strong> {{ formatDateTime(selectedOrder.created_at) }}</p>
-                        <p><strong>Phương thức:</strong> {{ selectedOrder.payment_method === 'cash' ? 'Tiền mặt' : 'Thẻ/QR' }}</p>
+                        <p><strong>Phương thức:</strong> {{ selectedOrder.payment_method === 'cash' ? 'Tiền mặt' :
+                            'Thẻ/QR' }}</p>
                     </div>
                     <div class="mb-4">
                         <h4 class="font-semibold mb-2">Sản phẩm:</h4>
-                        <div v-for="item in selectedOrder.items" :key="item.id" class="flex justify-between text-sm mb-1">
+                        <div v-for="item in selectedOrder.items" :key="item.id"
+                            class="flex justify-between text-sm mb-1">
                             <span>{{ item.product_name }} x{{ item.quantity }}</span>
                             <span>{{ formatPrice(item.unit_price * item.quantity) }}</span>
                         </div>
