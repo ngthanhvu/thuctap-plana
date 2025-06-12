@@ -186,6 +186,7 @@ const routes = [
     {
         path: '/pos',
         component: PosLayout,
+        meta: { middleware: auth },
         children: [
             {
                 path: 'sell',

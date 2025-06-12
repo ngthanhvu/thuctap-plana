@@ -83,6 +83,9 @@
                         <div class="text-xs text-gray-600">{{ formatPrice(item.price) }}</div>
                     </div>
                 </div>
+                <div v-if="cart.length === 0" class="flex justify-center items-center py-8">
+                    <p class="text-center text-gray-500">Không có đơn hàng</p>
+                </div>
             </div>
             <div class="pt-3 mt-auto">
                 <div class="space-y-1 mb-4 text-sm">

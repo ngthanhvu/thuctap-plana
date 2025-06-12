@@ -15,9 +15,9 @@
 
         <div class="mt-4 flex items-center justify-between">
             <div class="flex items-center space-x-4">
-                <div class="relative">
+                <div class="relative w-full">
                     <input type="text" v-model="searchQuery"
-                        class="block w-full rounded-md border-gray-300 pr-10 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                        class="w-full px-5 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         placeholder="Tìm kiếm...">
                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                         <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
@@ -29,7 +29,7 @@
                     </div>
                 </div>
                 <select v-model="dateFilter"
-                    class="block w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                    class="w-full px-5 py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                     <option value="today">Hôm nay</option>
                     <option value="yesterday">Hôm qua</option>
                     <option value="week">Tuần này</option>
@@ -37,17 +37,22 @@
                     <option value="all">Tất cả</option>
                 </select>
                 <select v-model="staffFilter"
-                    class="block w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                    class="w-full px-5 py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                     <option value="">Tất cả nhân viên</option>
                     <option v-for="staff in staffList" :key="staff.id" :value="staff.id">
                         {{ staff.name }}
                     </option>
                 </select>
-                <button @click="refreshBillHistory"
-                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm">
-                    Làm mới
-                </button>
             </div>
+            <button @click="refreshBillHistory"
+                class="px-3 py-1 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Làm mới
+            </button>
         </div>
 
         <!-- Table -->
@@ -187,7 +192,7 @@
                             </svg>
                         </button>
                         <button aria-current="page"
-                            class="relative z-10 inline-flex items-center bg-blue-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                            class="relative z-10 inline-flex items-center bg-blue-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-blue-600">
                             1
                         </button>
                         <button
