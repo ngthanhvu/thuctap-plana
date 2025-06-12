@@ -18,7 +18,9 @@ import OrderList from '../views/orders/OrderList.vue'
 import StaffList from '../views/staff/StaffList.vue'
 import StaffCreate from '../views/staff/StaffCreate.vue'
 import Dashboard from '../views/dashboard/Dashboard.vue'
-import Pos from '../views/POS/Sell.vue'
+import PosLayout from '../layouts/PosLayout.vue'
+import PosContent from '../views/POS/PosContent.vue'
+import PosReport from '../views/POS/Report.vue'
 
 import { auth, admin } from './middleware/auth'
 
@@ -182,12 +184,26 @@ const routes = [
         }
     },
     {
-        path: '/pos/sell',
-        name: 'Pos',
-        component: Pos,
-        meta: {
-            title: 'POS'
-        }
+        path: '/pos',
+        component: PosLayout,
+        children: [
+            {
+                path: 'sell',
+                name: 'Pos',
+                component: PosContent,
+                meta: {
+                    title: 'POS'
+                }
+            },
+            {
+                path: 'report',
+                name: 'PosReport',
+                component: PosReport,
+                meta: {
+                    title: 'Báo cáo'
+                }
+            }
+        ]
     }
 ]
 

@@ -1,10 +1,10 @@
 <template>
-    <div class="lg:w-1/6 bg-white rounded-xl shadow-lg p-4 h-full overflow-y-auto">
+    <div class="w-full bg-white rounded-xl shadow-lg p-4 mb-4">
         <h2 class="text-lg font-bold mb-4">Danh mục</h2>
-        <div class="space-y-2">
+        <div class="flex flex-wrap gap-2">
             <button v-for="category in categories" :key="category.id" @click="setCategory(category.id)"
-                class="w-full text-left px-3 py-2 rounded"
-                :class="category.active ? 'bg-indigo-100 text-indigo-700 font-medium' : 'hover:bg-gray-100'">
+                class="px-4 py-2 rounded-lg whitespace-nowrap"
+                :class="category.active ? 'bg-indigo-100 text-indigo-700 font-medium' : 'bg-gray-100 hover:bg-gray-200'">
                 {{ category.name }}
             </button>
         </div>

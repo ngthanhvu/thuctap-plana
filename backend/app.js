@@ -18,6 +18,8 @@ app.use('/api/staffs', require('./routes/staff.routes'));
 app.use('/api/categories', require('./routes/category.routes'));
 app.use('/api/inventories', require('./routes/inventory.routes'));
 app.use('/api/stock-movements', require('./routes/stock_movement.routes'));
+app.use('/api/pos', require('./routes/pos.routes'));
+app.use('/api/customers', require('./routes/customer.routes'));
 
 const initializeServices = async () => {
     await connectRedis(); // 👈

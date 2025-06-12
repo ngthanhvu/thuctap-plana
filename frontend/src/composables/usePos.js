@@ -1,4 +1,4 @@
-import { ref, computed, provide, inject, onMounted } from "vue";
+import { ref, computed, provide, inject, onMounted, watch } from 'vue';
 import axios from "axios";
 
 const POS_STORE_KEY = Symbol("pos-store");
@@ -11,54 +11,266 @@ export function usePosStore() {
   return store;
 }
 
-// State
-// const categories = ref([
-//     { id: 1, name: 'Tất cả', active: true },
-//     { id: 2, name: 'Đồ uống', active: false },
-//     { id: 3, name: 'Đồ ăn', active: false },
-//     { id: 4, name: 'Khai vị', active: false },
-//     { id: 5, name: 'Tráng miệng', active: false },
-//     { id: 6, name: 'Combo', active: false },
-// ])
-
-// const products = ref([
-//     { id: 1, name: 'Sushi', price: 75000, category: 3, image: '🍣' },
-//     { id: 2, name: 'Cà phê', price: 35000, category: 2, image: '☕' },
-//     { id: 3, name: 'Hamburger', price: 65000, category: 3, image: '🍔' },
-//     { id: 4, name: 'Pizza', price: 120000, category: 3, image: '🍕' },
-//     { id: 5, name: 'Nước ép', price: 45000, category: 2, image: '🍹' },
-//     { id: 6, name: 'Bánh ngọt', price: 55000, category: 5, image: '🍰' },
-// ])
 export function createPosStore() {
-    
   const categories = ref([]);
   const products = ref([]);
- async function fetchCategories() {
-  try {
-    const res = await axios.get("http://localhost:3000/api/categories");
-    categories.value = res.data;
-  } catch (error) {
-    console.error("Lỗi khi fetch categories:", error);
-  }
-}
-
-async function fetchProducts() {
-  try {
-    const res = await axios.get("http://localhost:3000/api/products");
-    products.value = res.data;
-  } catch (error) {
-    console.error("Lỗi khi fetch products:", error);
-  }
-}
-
-onMounted(() => {
-  fetchCategories();
-  fetchProducts();
-});
-
+  const customers = ref([]);
   const cart = ref([]);
   const searchQuery = ref("");
   const selectedCategory = ref(1);
+  const selectedCustomer = ref(null);
+  const currentSession = ref(null);
+  const currentUser = ref({ id: 1, name: 'Nhân viên', role: 'admin' });
+  const salesReport = ref(null);
+  const paymentQR = ref(null);
+  const orders = ref([]);
+  const currentView = ref('pos'); // pos, orders, report, inventory, teams, settings
+
+  // Khôi phục session từ localStorage khi khởi tạo
+  function restoreSession() {
+    try {
+      const savedSession = localStorage.getItem('pos_session');
+      const savedCart = localStorage.getItem('pos_cart');
+      const savedCustomer = localStorage.getItem('pos_selected_customer');
+      
+      if (savedSession) {
+        currentSession.value = JSON.parse(savedSession);
+      }
+      if (savedCart) {
+        cart.value = JSON.parse(savedCart);
+      }
+      if (savedCustomer) {
+        selectedCustomer.value = JSON.parse(savedCustomer);
+      }
+    } catch (error) {
+      console.error('Lỗi khi khôi phục session:', error);
+    }
+  }
+
+  // Lưu session vào localStorage
+  function saveSession() {
+    try {
+      if (currentSession.value) {
+        localStorage.setItem('pos_session', JSON.stringify(currentSession.value));
+      } else {
+        localStorage.removeItem('pos_session');
+      }
+    } catch (error) {
+      console.error('Lỗi khi lưu session:', error);
+    }
+  }
+
+  // Lưu cart vào localStorage
+  function saveCart() {
+    try {
+      localStorage.setItem('pos_cart', JSON.stringify(cart.value));
+    } catch (error) {
+      console.error('Lỗi khi lưu cart:', error);
+    }
+  }
+
+  // Lưu customer đã chọn
+  function saveSelectedCustomer() {
+    try {
+      if (selectedCustomer.value) {
+        localStorage.setItem('pos_selected_customer', JSON.stringify(selectedCustomer.value));
+      } else {
+        localStorage.removeItem('pos_selected_customer');
+      }
+    } catch (error) {
+      console.error('Lỗi khi lưu customer:', error);
+    }
+  }
+
+  // Watch để tự động lưu khi có thay đổi
+  watch(currentSession, saveSession, { deep: true });
+  watch(cart, saveCart, { deep: true });
+  watch(selectedCustomer, saveSelectedCustomer, { deep: true });
+
+  // Fetch functions
+  async function fetchCategories() {
+    try {
+      const res = await axios.get("http://localhost:3000/api/categories");
+      categories.value = res.data;
+    } catch (error) {
+      console.error("Lỗi khi fetch categories:", error);
+    }
+  }
+
+  async function fetchProducts() {
+    try {
+      const res = await axios.get("http://localhost:3000/api/products");
+      products.value = res.data;
+    } catch (error) {
+      console.error("Lỗi khi fetch products:", error);
+    }
+  }
+
+  async function fetchCustomers() {
+    try {
+      const res = await axios.get("http://localhost:3000/api/customers");
+      customers.value = res.data;
+    } catch (error) {
+      console.error("Lỗi khi fetch customers:", error);
+    }
+  }
+
+  // Fetch orders
+  async function fetchOrders() {
+    try {
+      const res = await axios.get('http://localhost:3000/api/pos/orders');
+      orders.value = res.data;
+    } catch (error) {
+      console.error("Lỗi khi fetch orders:", error);
+    }
+  }
+
+  async function searchCustomers(query) {
+    try {
+      const res = await axios.get(`http://localhost:3000/api/customers/search?query=${query}`);
+      return res.data;
+    } catch (error) {
+      console.error("Lỗi khi search customers:", error);
+      return [];
+    }
+  }
+
+  // POS Session functions
+  async function startPosSession(openingCash = 0) {
+    try {
+      const res = await axios.post('http://localhost:3000/api/pos/session/start', {
+        staff_id: currentUser.value.id,
+        opening_cash: openingCash
+      });
+      currentSession.value = res.data;
+      return res.data;
+    } catch (error) {
+      console.error('Lỗi khi khởi tạo phiên POS:', error);
+      throw error;
+    }
+  }
+
+  async function endPosSession(closingCash) {
+    try {
+      const res = await axios.post('http://localhost:3000/api/pos/session/end', {
+        session_id: currentSession.value.id,
+        closing_cash: closingCash
+      });
+      currentSession.value = null;
+      // Xóa dữ liệu localStorage khi kết thúc session
+      localStorage.removeItem('pos_session');
+      localStorage.removeItem('pos_cart');
+      localStorage.removeItem('pos_selected_customer');
+      return res.data;
+    } catch (error) {
+      console.error('Lỗi khi đóng phiên POS:', error);
+      throw error;
+    }
+  }
+
+  // Order functions
+  async function processPayment(paymentMethod) {
+    try {
+      if (!currentSession.value) {
+        throw new Error('Chưa khởi tạo phiên POS');
+      }
+
+      const orderData = {
+        customer_id: selectedCustomer.value?.id || null,
+        staff_id: currentUser.value.id,
+        pos_session_id: currentSession.value.id,
+        items: cart.value.map(item => ({
+          product_id: item.id,
+          quantity: item.quantity,
+          unit_price: item.price
+        })),
+        subtotal: cartTotal.value,
+        discount: cartDiscount.value,
+        tax: cartTax.value,
+        total: cartFinalTotal.value,
+        payment_method: paymentMethod
+      };
+
+      const res = await axios.post('http://localhost:3000/api/pos/orders', orderData);
+      clearCart();
+      selectedCustomer.value = null;
+      // Cập nhật danh sách đơn hàng
+      await fetchOrders();
+      return res.data;
+    } catch (error) {
+      console.error('Lỗi khi xử lý thanh toán:', error);
+      throw error;
+    }
+  }
+
+  async function saveDraftOrder() {
+    try {
+      if (!currentSession.value) {
+        throw new Error('Chưa khởi tạo phiên POS');
+      }
+
+      const orderData = {
+        customer_id: selectedCustomer.value?.id || null,
+        staff_id: currentUser.value.id,
+        pos_session_id: currentSession.value.id,
+        items: cart.value.map(item => ({
+          product_id: item.id,
+          quantity: item.quantity,
+          unit_price: item.price
+        })),
+        subtotal: cartTotal.value,
+        discount: cartDiscount.value,
+        tax: cartTax.value,
+        total: cartFinalTotal.value
+      };
+
+      const res = await axios.post('http://localhost:3000/api/pos/orders/draft', orderData);
+      clearCart();
+      selectedCustomer.value = null;
+      // Cập nhật danh sách đơn hàng
+      await fetchOrders();
+      return res.data;
+    } catch (error) {
+      console.error('Lỗi khi lưu đơn hàng tạm:', error);
+      throw error;
+    }
+  }
+
+  // Cập nhật trạng thái đơn hàng
+  async function updateOrderStatus(orderId, status) {
+    try {
+      const res = await axios.put(`http://localhost:3000/api/pos/orders/${orderId}/status`, {
+        status: status
+      });
+      // Cập nhật danh sách đơn hàng
+      await fetchOrders();
+      return res.data;
+    } catch (error) {
+      console.error('Lỗi khi cập nhật trạng thái đơn hàng:', error);
+      throw error;
+    }
+  }
+
+  // Hủy đơn hàng
+  async function cancelOrder(orderId) {
+    try {
+      const res = await axios.delete(`http://localhost:3000/api/pos/orders/${orderId}`);
+      // Cập nhật danh sách đơn hàng
+      await fetchOrders();
+      return res.data;
+    } catch (error) {
+      console.error('Lỗi khi hủy đơn hàng:', error);
+      throw error;
+    }
+  }
+
+  onMounted(() => {
+    restoreSession();
+    fetchCategories();
+    fetchProducts();
+    fetchCustomers();
+    fetchOrders();
+  });
 
   // Getters
   const filteredProducts = computed(() => {
@@ -92,7 +304,6 @@ onMounted(() => {
     return cartTotal.value - cartDiscount.value + cartTax.value;
   });
 
-  // Actions
   function setCategory(categoryId) {
     selectedCategory.value = categoryId;
     categories.value.forEach((cat) => {
@@ -134,22 +345,96 @@ onMounted(() => {
     cart.value = [];
   }
 
+  function setSelectedCustomer(customer) {
+    selectedCustomer.value = customer;
+  }
+
+  function setCurrentView(view) {
+    currentView.value = view;
+  }
+
+  // Thống kê doanh thu
+  async function fetchSalesReport(sessionId = null) {
+    try {
+      const params = sessionId ? `?session_id=${sessionId}` : '';
+      const res = await axios.get(`http://localhost:3000/api/pos/reports/summary${params}`);
+      salesReport.value = res.data;
+      return res.data;
+    } catch (error) {
+      console.error('Lỗi khi lấy báo cáo doanh thu:', error);
+      throw error;
+    }
+  }
+
+  // Tạo QR code thanh toán
+  async function generatePaymentQR(amount, orderNumber) {
+    try {
+      const res = await axios.post('http://localhost:3000/api/pos/payment/qr', {
+        amount: amount,
+        order_number: orderNumber
+      });
+      paymentQR.value = res.data;
+      return res.data;
+    } catch (error) {
+      console.error('Lỗi khi tạo QR thanh toán:', error);
+      throw error;
+    }
+  }
+
+  // Tạo khách hàng mới
+  async function createCustomer(customerData) {
+    try {
+      const res = await axios.post('http://localhost:3000/api/customers', customerData);
+      // Cập nhật danh sách khách hàng
+      await fetchCustomers();
+      return res.data;
+    } catch (error) {
+      console.error('Lỗi khi tạo khách hàng:', error);
+      throw error;
+    }
+  }
+
   const store = {
+    // State
     categories,
     products,
+    customers,
     cart,
     searchQuery,
     selectedCategory,
+    selectedCustomer,
+    currentSession,
+    currentUser,
+    salesReport,
+    paymentQR,
+    orders,
+    currentView,
+    // Computed
     filteredProducts,
     cartTotal,
     cartDiscount,
     cartTax,
     cartFinalTotal,
+    // Actions
     setCategory,
     addToCart,
     removeFromCart,
     updateQuantity,
     clearCart,
+    setSelectedCustomer,
+    setCurrentView,
+    searchCustomers,
+    startPosSession,
+    endPosSession,
+    processPayment,
+    saveDraftOrder,
+    updateOrderStatus,
+    cancelOrder,
+    fetchSalesReport,
+    generatePaymentQR,
+    createCustomer,
+    fetchOrders,
+    restoreSession
   };
 
   provide(POS_STORE_KEY, store);
