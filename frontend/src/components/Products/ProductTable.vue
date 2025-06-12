@@ -103,10 +103,10 @@
                             Không có sản phẩm nào
                         </td>
                     </tr>
-                    <tr v-for="product in filteredProducts" :key="product.id"
+                    <tr v-for="(product, index) in filteredProducts" :key="product.id"
                         class="hover:bg-gray-50 transition-colors duration-150">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900 font-semibold">#{{ product.id }}</div>
+                            <div class="text-sm text-gray-900 font-semibold">#{{ index + 1 }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center gap-3">

@@ -42,19 +42,16 @@
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                             Danh mục cha
                         </th>
-                        <!-- <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                            Trạng thái
-                        </th> -->
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                             Hành động
                         </th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    <tr v-for="category in filteredCategories" :key="category.id"
+                    <tr v-for="(category, index) in filteredCategories" :key="category.id"
                         class="hover:bg-gray-50 transition-colors duration-150">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900">{{ category.id }}</div>
+                            <div class="text-sm font-medium text-gray-900">#{{ index + 1 }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm font-medium text-gray-900">{{ category.name }}</div>
@@ -62,22 +59,6 @@
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-gray-900">{{ getParendCategoryName(category.parent_id) }}</div>
                         </td>
-                        <!-- <td class="px-6 py-4 whitespace-nowrap">
-                            <span :class="[
-                                'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
-                                category.status === 'active'
-                                    ? 'bg-green-100 text-green-800'
-                                    : 'bg-yellow-100 text-yellow-800'
-                            ]">
-                                <span :class="[
-                                    'w-1.5 h-1.5 mr-1.5 rounded-full',
-                                    category.status === 'active'
-                                        ? 'bg-green-400'
-                                        : 'bg-yellow-400'
-                                ]"></span>
-                                {{ category.status === 'active' ? 'Active' : 'Out of Stock' }}
-                            </span>
-                        </td> -->
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <div class="flex items-center space-x-3">
                                 <button @click="editCategory(category)"

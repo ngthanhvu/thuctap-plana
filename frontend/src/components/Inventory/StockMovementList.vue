@@ -37,9 +37,9 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-                <tr v-for="movement in stockMovements" :key="movement.id" class="hover:bg-gray-50">
+                <tr v-for="(movement, index) in stockMovements" :key="movement.id" class="hover:bg-gray-50">
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="text-sm font-medium text-gray-900">#{{ movement.id }}</span>
+                        <span class="text-sm font-medium text-gray-900">#{{ index + 1 }}</span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <span :class="[
@@ -81,8 +81,9 @@
         </table>
     </div>
 
-    <div v-if="showDetailsModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-        <div class="relative top-20 mx-auto p-5 border w-3/4 max-w-4xl shadow-lg rounded-md bg-white">
+    <!-- Movement Details Modal -->
+    <div v-if="showDetailsModal" class="fixed inset-0 backdrop-blur-sm bg-black/30 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 w-3/4 max-w-4xl shadow-lg rounded-md bg-white">
             <div class="mt-3">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-semibold text-gray-900">
@@ -165,7 +166,8 @@
         </div>
     </div>
 
-    <div v-if="showPrintModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <!-- Print Receipt Modal -->
+    <div v-if="showPrintModal" class="fixed inset-0 backdrop-blur-sm bg-black/30 overflow-y-auto h-full w-full z-50">
         <div class="relative top-10 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-white">
             <div class="mt-3">
                 <div class="no-print flex items-center justify-between mb-4">
