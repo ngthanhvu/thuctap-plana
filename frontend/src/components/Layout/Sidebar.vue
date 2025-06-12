@@ -1,7 +1,7 @@
 <template>
     <div class="fixed inset-y-0 left-0 w-64 bg-gray-800 text-white hidden md:block">
         <div class="p-4 border-b border-gray-700">
-            <h1 class="text-xl font-semibold">Admin Panel</h1>
+            <h1 class="text-xl font-semibold">Trang Quản Trị</h1>
         </div>
         <nav class="p-4 flex flex-col h-full">
             <span class="text-xs text-gray-400 uppercase tracking-wider">Quản lý</span>

@@ -2,7 +2,6 @@ import { ref, computed, provide, inject, onMounted, watch } from 'vue';
 import axios from "axios";
 import { useAuth } from './useAuth';
 
-// Thiết lập baseURL từ biến môi trường
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 
 const POS_STORE_KEY = Symbol("pos-store");
@@ -17,7 +16,7 @@ export function usePosStore() {
 
 export function createPosStore() {
   const { user: authUser, isAuthenticated } = useAuth();
-  
+
   const categories = ref([]);
   const products = ref([]);
   const customers = ref([]);
@@ -117,7 +116,7 @@ export function createPosStore() {
 
   async function fetchOrders() {
     try {
-      const res = await axios.get('/api/pos/orders');
+      const res = await axios.get('/api/orders');
       orders.value = res.data;
     } catch (error) {
       console.error("Lỗi khi fetch orders:", error);

@@ -271,21 +271,16 @@ const searchQuery = ref('')
 const showOrderDetails = ref(false)
 const selectedOrder = ref(null)
 
-// Danh sách nhân viên (có thể lấy từ API hoặc store)
 const staffList = ref([
-    // Mẫu dữ liệu, cần thay thế bằng dữ liệu thực từ API
     { id: 1, name: 'Nguyễn Văn A' },
     { id: 2, name: 'Trần Thị B' },
     { id: 3, name: 'Lê Văn C' }
 ])
 
-// Lọc đơn hàng theo bộ lọc
 const filteredOrders = computed(() => {
     return orders.value.filter(order => {
-        // Lọc theo nhân viên
         const matchesStaff = !staffFilter.value || order.staff_id === parseInt(staffFilter.value)
 
-        // Lọc theo ngày
         let matchesDate = true
         if (dateFilter.value !== 'all') {
             const orderDate = new Date(order.created_at)
@@ -311,7 +306,6 @@ const filteredOrders = computed(() => {
             }
         }
 
-        // Lọc theo từ khóa tìm kiếm
         const searchTerm = searchQuery.value.toLowerCase()
         const matchesSearch = !searchTerm ||
             (order.order_number && order.order_number.toLowerCase().includes(searchTerm)) ||
@@ -322,7 +316,6 @@ const filteredOrders = computed(() => {
     })
 })
 
-// Các hàm định dạng và hiển thị
 function formatPrice(price) {
     return new Intl.NumberFormat('vi-VN', {
         style: 'currency',
@@ -383,7 +376,6 @@ async function refreshBillHistory() {
 }
 
 function exportBillHistory() {
-    // Tạo dữ liệu CSV
     const headers = ['Mã đơn', 'Thời gian', 'Nhân viên', 'Khách hàng', 'Phương thức', 'Tổng tiền', 'Trạng thái']
 
     const rows = filteredOrders.value.map(order => [
@@ -398,7 +390,6 @@ function exportBillHistory() {
 
     const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n')
 
-    // Tạo và tải file CSV
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
     const link = document.createElement('a')
     link.href = URL.createObjectURL(blob)

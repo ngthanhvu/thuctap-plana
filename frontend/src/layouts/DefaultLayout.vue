@@ -3,7 +3,6 @@
         <Sidebar />
         <div class="flex-1 flex flex-col md:ml-64">
             <Navbar />
-            <!-- Main content -->
             <div class="flex-1 p-6 bg-gray-50 mt-16">
                 <router-view />
             </div>

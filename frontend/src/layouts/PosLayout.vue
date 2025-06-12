@@ -1,8 +1,8 @@
 <template>
     <div class="min-h-screen bg-gray-50 flex">
-        <PosSidebar />
-        <div class="flex-1 flex flex-col">
-            <PosTopHeader />
+        <PosSidebar class="fixed left-0 top-0 z-10" />
+        <div class="flex-1 flex flex-col ml-64"> <!-- Thêm ml-64 để tạo khoảng cách bằng với chiều rộng của sidebar -->
+            <PosTopHeader class="sticky top-0 z-10" />
             <div class="flex-1 p-6">
                 <router-view />
             </div>

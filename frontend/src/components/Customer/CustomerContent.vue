@@ -23,53 +23,41 @@
                 <select v-model="filterType"
                     class="px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200">
                     <option value="">Tất cả</option>
-                    <option value="regular">Regular</option>
-                    <option value="vip">VIP</option>
-                    <option value="wholesale">Wholesale</option>
+                    <!-- <option value="regular">Regular</option> -->
+                    <!-- <option value="vip">VIP</option> -->
+                    <!-- <option value="wholesale">Wholesale</option> -->
                 </select>
             </div>
         </div>
     </div>
 
-    <CustomerTable :customers="filteredCustomers" @edit-customer="editCustomer" @view-orders="viewOrders"
-        @delete-customer="deleteCustomer" />
+    <CustomerTable :customers="filteredCustomers" @delete-customer="handleDeleteCustomer" />
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import CustomerTable from './CustomerTable.vue'
+import { useCustomer } from '../../composables/useCustomer'
 
-// State
+const { getCustomerList, loading, errors, deleteCustomer } = useCustomer()
+
 const searchQuery = ref('')
 const filterType = ref('')
-const showModal = ref(false)
-const isEditing = ref(false)
-const formData = ref({
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-    type: 'regular',
-    status: 'active'
+const customerList = ref([])
+
+const loadCustomers = async () => {
+    try {
+        const data = await getCustomerList()
+        customerList.value = data
+    } catch (error) {
+        console.error('Lỗi khi lấy dữ liệu khách hàng:', error)
+    }
+}
+
+onMounted(async () => {
+    await loadCustomers()
 })
 
-// Mock data - Replace with actual API calls
-const customerList = ref([
-    {
-        id: 1,
-        name: 'Jane Smith',
-        email: 'jane@example.com',
-        phone: '+1234567890',
-        address: '123 Main St, City',
-        type: 'vip',
-        status: 'active',
-        totalOrders: 15,
-        avatar: 'https://via.placeholder.com/40'
-    },
-    // Add more mock data as needed
-])
-
-// Computed
 const filteredCustomers = computed(() => {
     return customerList.value.filter(customer => {
         const matchesSearch = customer.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
@@ -79,47 +67,15 @@ const filteredCustomers = computed(() => {
     })
 })
 
-// Methods
-const openAddCustomerModal = () => {
-    isEditing.value = false
-    formData.value = {
-        name: '',
-        email: '',
-        phone: '',
-        address: '',
-        type: 'regular',
-        status: 'active'
+const handleDeleteCustomer = async (id) => {
+    try {
+        await deleteCustomer(id)
+        await loadCustomers() // Gọi hàm loadCustomers để cập nhật lại danh sách
+    } catch (error) {
+        console.error('Lỗi khi xóa khách hàng:', error)
     }
-    showModal.value = true
 }
 
-const editCustomer = (customer) => {
-    isEditing.value = true
-    formData.value = { ...customer }
-    showModal.value = true
-}
-
-const closeModal = () => {
-    showModal.value = false
-}
-
-const submitForm = () => {
-    // Implement form submission logic here
-    console.log('Form submitted:', formData.value)
-    closeModal()
-}
-
-const deleteCustomer = (id) => {
-    // Implement delete logic here
-    console.log('Delete customer:', id)
-}
-
-const viewOrders = (id) => {
-    // Implement view orders logic here
-    console.log('View orders for customer:', id)
-}
 </script>
 
-<style scoped>
-/* Add any custom styles here */
-</style>
+<style scoped></style>

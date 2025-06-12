@@ -6,7 +6,7 @@ const CustomerPoint = db.CustomerPoint;
 exports.getAll = async (req, res) => {
     try {
         const customers = await Customer.findAll({
-            order: [['created_at', 'DESC']]
+            order: [['created_at', 'ASC']]
         });
         res.json(customers);
     } catch (error) {
@@ -42,3 +42,17 @@ exports.create = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+exports.delete = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const customer = await Customer.findByPk(id);
+        if (!customer) {
+            return res.status(404).json({ message: 'Khách hàng không tồn tại' });
+        }
+        await customer.destroy();
+        res.status(200).json({ message: 'Khách hàng đã được xóa' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}

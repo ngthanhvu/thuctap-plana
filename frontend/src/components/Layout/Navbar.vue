@@ -9,7 +9,7 @@
                             d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>
-                <h2 class="text-xl font-semibold text-gray-800">Admin Dashboard</h2>
+                <h2 class="text-xl font-semibold text-gray-800">Bảng điều kiển</h2>
             </div>
 
             <div class="flex items-center space-x-4">
