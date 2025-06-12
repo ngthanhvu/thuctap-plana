@@ -25,10 +25,10 @@ export const admin = async (to, from, next) => {
     try {
         await getUserInfo()
         if (!isAdmin()) {
-            return next({ name: 'Dashboard' })
+            return next({ name: 'Pos' })
         }
         next()
     } catch (error) {
         next({ name: 'Login' })
     }
-} 
+}

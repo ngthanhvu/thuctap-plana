@@ -80,7 +80,8 @@
                     <div class="text-sm">
                         <div class="font-medium text-gray-900">{{ user?.name || currentUser.name }}</div>
                         <div class="flex items-center text-xs text-gray-500">
-                            <span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full mr-1">{{ user?.role || currentUser.role }}</span>
+                            <span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full mr-1">{{ user?.role ||
+                                currentUser.role }}</span>
                             <span v-if="user?.email" class="truncate max-w-[120px]">{{ user.email }}</span>
                         </div>
                     </div>
@@ -175,7 +176,8 @@
             </div>
         </div>
 
-        <div v-if="showReportModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div v-if="showReportModal"
+            class="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50">
             <div class="bg-white p-6 rounded-lg w-[800px] max-w-4xl">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-bold text-gray-800">Thống kê doanh thu ca làm việc</h3>

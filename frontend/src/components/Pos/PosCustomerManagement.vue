@@ -40,7 +40,7 @@
 
         <!-- Add/Edit Customer Modal -->
         <div v-if="showAddCustomerForm"
-            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            class="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50">
             <div class="bg-white p-6 rounded-lg w-96 max-w-md">
                 <h3 class="text-lg font-bold text-gray-800 mb-4">
                     {{ editingCustomer ? 'Sửa khách hàng' : 'Thêm khách hàng mới' }}

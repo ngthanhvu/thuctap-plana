@@ -35,7 +35,8 @@ const routes = [
                 name: 'Dashboard',
                 component: Dashboard,
                 meta: {
-                    title: 'Tổng quan'
+                    title: 'Tổng quan',
+                    middleware: admin
                 }
             },
             {
