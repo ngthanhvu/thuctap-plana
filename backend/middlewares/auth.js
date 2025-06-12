@@ -1,24 +1,20 @@
 const jwt = require('jsonwebtoken');
-const SECRET_KEY = 'my-secret-key';
+const SECRET_KEY = process.env.JWT_SECRET;
 
-exports.verifyToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
+const authMiddleware = (req, res, next) => {
+    const token = req.header('Authorization')?.replace('Bearer ', '');
 
-    if (!token) return res.status(401).json({ message: 'Token không tồn tại' });
-
-    jwt.verify(token, SECRET_KEY, (err, user) => {
-        if (err) return res.status(403).json({ message: 'Token không hợp lệ' });
-
-        req.user = user; // Gán user vào request
-        next();
-    });
-};
-
-// Hàm lấy user từ token
-exports.getUser = (req, res) => {
-    if (!req.user) {
-        return res.status(401).json({ message: 'Chưa xác thực' });
+    if (!token) {
+        return res.status(401).json({ message: 'No token provided' });
     }
-    res.json({ user: req.user });
+
+    try {
+        const decoded = jwt.verify(token, SECRET_KEY);
+        req.user = decoded;
+        next();
+    } catch (error) {
+        return res.status(401).json({ message: 'Invalid token' });
+    }
 };
+
+module.exports = authMiddleware;

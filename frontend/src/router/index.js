@@ -1,24 +1,32 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import DefaultLayout from '../layouts/DefaultLayout.vue'
-import HomeView from '../views/Home.vue'
 import LoginView from '../views/auth/Login.vue'
 import ProductList from '../views/products/ProductList.vue'
 import ProductCreate from '../views/products/ProductCreate.vue'
+import ProductEdit from '../views/products/ProductEdit.vue'
 import CategoriesCreate from '../views/categories/CategoriesCreate.vue'
 import CategoriesList from '../views/categories/CategoriesList.vue'
+import CategoriesEdit from '../views/categories/CategoriesEdit.vue'
 import BrandList from '../views/brands/BrandList.vue'
 import BrandCreate from '../views/brands/BrandCreate.vue'
+import BrandEdit from '../views/brands/BrandEdit.vue'
 import CustomerList from '../views/customers/CustomerList.vue'
 import InventoryList from '../views/inventory/InventoryList.vue'
 import InventoryImport from '../views/inventory/Import.vue'
+import Invoice from '../views/inventory/invoice.vue'
 import OrderList from '../views/orders/OrderList.vue'
 import StaffList from '../views/staff/StaffList.vue'
+import StaffCreate from '../views/staff/StaffCreate.vue'
 import Dashboard from '../views/dashboard/Dashboard.vue'
+import Pos from '../views/POS/Sell.vue'
+
+import { auth, admin } from './middleware/auth'
 
 const routes = [
     {
         path: '/',
         component: DefaultLayout,
+        meta: { middleware: auth },
         children: [
             {
                 path: '',
@@ -45,6 +53,14 @@ const routes = [
                 }
             },
             {
+                path: 'products/edit/:id',
+                name: 'ProductEdit',
+                component: ProductEdit,
+                meta: {
+                    title: 'Cập nhật sản phẩm'
+                }
+            },
+            {
                 path: 'products/categories/create',
                 name: 'CategoriesCreate',
                 component: CategoriesCreate,
@@ -61,11 +77,26 @@ const routes = [
                 }
             },
             {
+                path: 'products/categories/edit/:id',
+                name: 'CategoriesEdit',
+                component: CategoriesEdit,
+                meta: {
+                    title: 'Cập nhật danh mục'
+                }
+            },
+            {
                 path: 'products/brands',
                 name: 'BrandList',
                 component: BrandList,
                 meta: {
                     title: 'Danh sách thương hiệu'
+                }
+            }, {
+                path: 'products/brands/create',
+                name: 'BrandCreate',
+                component: BrandCreate,
+                meta: {
+                    title: 'Thêm thương hiệu'
                 }
             },
             {
@@ -74,6 +105,13 @@ const routes = [
                 component: BrandCreate,
                 meta: {
                     title: 'Thêm thương hiệu'
+                }
+            }, {
+                path: 'products/brands/edit/:id',
+                name: 'BrandEdit',
+                component: BrandEdit,
+                meta: {
+                    title: 'Cập nhật thương hiệu'
                 }
             },
             {
@@ -99,6 +137,13 @@ const routes = [
                 meta: {
                     title: 'Nhập kho'
                 }
+            }, {
+                path: 'inventory/invoice',
+                name: 'Invoice',
+                component: Invoice,
+                meta: {
+                    title: 'Hóa đơn nhập/xuất kho'
+                }
             },
             {
                 path: 'orders',
@@ -113,7 +158,17 @@ const routes = [
                 name: 'StaffList',
                 component: StaffList,
                 meta: {
-                    title: 'Danh sách nhân viên'
+                    title: 'Danh sách nhân viên',
+                    middleware: admin
+                }
+            },
+            {
+                path: 'staff/create',
+                name: 'StaffCreate',
+                component: StaffCreate,
+                meta: {
+                    title: 'Thêm nhân viên',
+                    middleware: admin
                 }
             }
         ]
@@ -125,6 +180,14 @@ const routes = [
         meta: {
             title: 'Đăng nhập'
         }
+    },
+    {
+        path: '/pos/sell',
+        name: 'Pos',
+        component: Pos,
+        meta: {
+            title: 'POS'
+        }
     }
 ]
 
@@ -133,9 +196,14 @@ const router = createRouter({
     routes
 })
 
-router.beforeEach((to, from, next) => {
-    document.title = `${to.meta.title} | Quản lý bán hàng`;
-    next();
-});
+router.beforeEach(async (to, from, next) => {
+    document.title = `${to.meta.title} | Quản lý bán hàng`
+
+    if (to.meta.middleware) {
+        return to.meta.middleware(to, from, next)
+    }
+
+    next()
+})
 
 export default router

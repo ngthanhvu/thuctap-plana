@@ -26,6 +26,10 @@
                     :class="[$route.path === '/inventory/import' ? 'bg-gray-700' : '']">
                     <span class="ml-3">Nhập hàng</span>
                 </router-link>
+                <router-link to="/inventory/invoice" class="flex items-center p-2 rounded-lg hover:bg-gray-700"
+                    :class="[$route.path === '/inventory/invoice' ? 'bg-gray-700' : '']">
+                    <span class="ml-3">Hoá đơn</span>
+                </router-link>
             </div>
         </div>
     </li>

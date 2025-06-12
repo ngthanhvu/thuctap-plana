@@ -1,225 +1,338 @@
 <template>
-    <div class="px-4 sm:px-6 lg:px-8">
-        <div class="sm:flex sm:items-center">
-            <div class="sm:flex-auto">
-                <h1 class="text-xl font-semibold text-gray-900">Danh sách sản phẩm</h1>
-                <p class="mt-2 text-sm text-gray-700">Danh sách tất cả sản phẩm trong hệ thống</p>
-            </div>
-            <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-                <router-link to="/products/create"
-                    class="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto">
-                    Thêm sản phẩm
-                </router-link>
-            </div>
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Quản lý sản phẩm</h1>
+            <p class="text-gray-600">Quản lý hàng tồn kho và thông tin chi tiết về sản phẩm của bạn</p>
         </div>
+        <router-link to="/products/create"
+            class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Thêm sản phẩm mới
+        </router-link>
+    </div>
 
-        <!-- Search and Filter -->
-        <div class="mt-4 flex items-center justify-between">
-            <div class="flex items-center space-x-4">
-                <div class="relative">
-                    <input type="text"
-                        class="block w-full rounded-md border-gray-300 pr-10 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                        placeholder="Tìm kiếm...">
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                        <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                            fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                                clip-rule="evenodd" />
-                        </svg>
-                    </div>
+    <!-- Modern Search and Filter Section -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 mb-3">
+        <div class="flex flex-col lg:flex-row gap-4">
+            <!-- Search Input with Icon -->
+            <div class="flex-1 relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
                 </div>
-                <select
-                    class="block w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                <input type="text" v-model="searchQuery" placeholder="Tìm kiếm sản phẩm..."
+                    class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-gray-200 focus:border-gray-200 transition-colors duration-200">
+            </div>
+            <!-- Category Filter -->
+            <div class="w-full lg:w-64">
+                <select v-model="categoryFilter"
+                    class="block w-full pl-3 pr-10 py-3 text-base border border-gray-300 rounded-lg leading-5 bg-white focus:outline-none focus:ring-1 focus:ring-gray-200 focus:border-gray-200 transition-colors duration-200">
                     <option value="">Tất cả danh mục</option>
-                    <option value="electronics">Điện tử</option>
-                    <option value="clothing">Quần áo</option>
-                    <option value="books">Sách</option>
+                    <option v-for="category in uniqueCategories" :key="category" :value="category">{{ category }}
+                    </option>
                 </select>
             </div>
         </div>
+    </div>
 
-        <!-- Table -->
-        <div class="mt-8 flex flex-col">
-            <div class="-m-1.5 overflow-x-auto">
-                <div class="p-1.5 min-w-full inline-block align-middle">
-                    <div class="border border-gray-200 rounded-lg overflow-hidden">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th scope="col" class="py-3 ps-4">
-                                        <div class="flex items-center h-5">
-                                            <input id="hs-table-checkbox-all" type="checkbox"
-                                                class="border-gray-200 rounded-sm text-blue-600 focus:ring-blue-500">
-                                            <label for="hs-table-checkbox-all" class="sr-only">Checkbox</label>
-                                        </div>
-                                    </th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                                        Sản phẩm
-                                    </th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                                        Danh mục
-                                    </th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                                        Giá
-                                    </th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                                        Trạng thái
-                                    </th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase">
-                                        Thao tác
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                <tr v-for="product in products" :key="product.id">
-                                    <td class="py-3 ps-4">
-                                        <div class="flex items-center h-5">
-                                            <input :id="'hs-table-checkbox-' + product.id" type="checkbox"
-                                                class="border-gray-200 rounded-sm text-blue-600 focus:ring-blue-500">
-                                            <label :for="'hs-table-checkbox-' + product.id"
-                                                class="sr-only">Checkbox</label>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="h-10 w-10 flex-shrink-0">
-                                                <img class="h-10 w-10 rounded-full object-cover" :src="product.image"
-                                                    :alt="product.name">
-                                            </div>
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-800">{{ product.name }}</div>
-                                                <div class="text-sm text-gray-500">{{ product.description }}</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                                        {{ product.category }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                                        {{ formatPrice(product.price) }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span
-                                            :class="[product.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800', 'inline-flex rounded-full px-2 text-xs font-semibold leading-5']">
-                                            {{ product.status === 'active' ? 'Đang bán' : 'Hết hàng' }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                                        <button type="button"
-                                            class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-hidden focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none mr-2">
-                                            Sửa
-                                        </button>
-                                        <button type="button"
-                                            class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-red-600 hover:text-red-800 focus:outline-hidden focus:text-red-800 disabled:opacity-50 disabled:pointer-events-none">
-                                            Xóa
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+    <!-- Loading State -->
+    <div v-if="loading" class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+        <p class="mt-2 text-gray-600">Đang tải dữ liệu...</p>
+    </div>
+
+    <!-- Error State -->
+    <div v-else-if="error" class="bg-white rounded-xl shadow-sm border border-red-200 p-8 text-center">
+        <div class="text-red-600 mb-2">
+            <svg class="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
         </div>
+        <p class="text-red-600">{{ error }}</p>
+        <button @click="loadProducts" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            Thử lại
+        </button>
+    </div>
 
-        <!-- Pagination -->
-        <div class="mt-4 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
-            <div class="flex flex-1 justify-between sm:hidden">
-                <button
-                    class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
-                    Trước
-                </button>
-                <button
-                    class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
-                    Sau
-                </button>
-            </div>
-            <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-                <div>
-                    <p class="text-sm text-gray-700">
-                        Hiển thị <span class="font-medium">1</span> đến <span class="font-medium">10</span> của <span
-                            class="font-medium">20</span> kết quả
-                    </p>
-                </div>
-                <div>
-                    <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-                        <button
-                            class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
-                            <span class="sr-only">Trước</span>
-                            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                <path fill-rule="evenodd"
-                                    d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                        </button>
-                        <button aria-current="page"
-                            class="relative z-10 inline-flex items-center bg-blue-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
-                            1
-                        </button>
-                        <button
-                            class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
-                            2
-                        </button>
-                        <button
-                            class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
-                            <span class="sr-only">Sau</span>
-                            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                <path fill-rule="evenodd"
-                                    d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                        </button>
-                    </nav>
-                </div>
-            </div>
+    <!-- Modern Table Container -->
+    <div v-else class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
+                    <tr>
+                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                            #
+                        </th>
+                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                            Sản phẩm
+                        </th>
+                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                            SKU
+                        </th>
+                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                            Mã vạch
+                        </th>
+                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                            Giá bán
+                        </th>
+                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                            Giá vốn
+                        </th>
+                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                            Danh mục
+                        </th>
+                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                            Thương hiệu
+                        </th>
+                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                            Trạng thái
+                        </th>
+                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                            Thao tác
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200 text-center">
+                    <tr v-if="filteredProducts.length === 0">
+                        <td colspan="9" class="px-6 py-8 text-center text-gray-500">
+                            Không có sản phẩm nào
+                        </td>
+                    </tr>
+                    <tr v-for="(product, index) in filteredProducts" :key="product.id"
+                        class="hover:bg-gray-50 transition-colors duration-150">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900 font-semibold">#{{ index + 1 }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center gap-3">
+                                <div class="h-10 w-10 flex-shrink-0">
+                                    <img class="h-10 w-10 rounded-lg object-cover border border-gray-200"
+                                        :src="product.image_url || '/placeholder-image.png'" :alt="product.name"
+                                        @error="handleImageError">
+                                </div>
+                                <div>
+                                    <div class="text-sm font-medium text-gray-900">{{ product.name }}</div>
+                                    <div class="text-sm text-gray-500">{{ product.description }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ product.sku }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">
+                                <Barcode :value="product.barcode" :id="product.id" />
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">{{ formatPrice(product.price) }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-500">{{ formatPrice(product.cost) }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ getCategoryName(product.category_id) }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ getBrandName(product.brand_id) }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span :class="[
+                                'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
+                                product.status === 'active'
+                                    ? 'bg-green-100 text-green-800'
+                                    : 'bg-yellow-100 text-yellow-800'
+                            ]">
+                                <span :class="[
+                                    'w-1.5 h-1.5 mr-1.5 rounded-full',
+                                    product.status === 'active'
+                                        ? 'bg-green-400'
+                                        : 'bg-yellow-400'
+                                ]"></span>
+                                {{ product.status === 'active' ? 'Hoạt động' : 'Không hoạt động' }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div class="flex items-center space-x-3">
+                                <button @click="editProduct(product)"
+                                    class="inline-flex items-center p-1.5 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-colors duration-150"
+                                    title="Chỉnh sửa sản phẩm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                        </path>
+                                    </svg>
+                                </button>
+                                <button @click="confirmDeleteProduct(product.id)"
+                                    class="inline-flex items-center p-1.5 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors duration-150"
+                                    title="Xóa sản phẩm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                        </path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useProduct } from '../../composables/useProduct'
+import { useRouter } from 'vue-router'
+import Barcode from './Barcode.vue'
+import { useBrand } from '../../composables/useBrand'
+import { useCategory } from '../../composables/useCategory'
+import Swal from 'sweetalert2'
 
-// Sample data
-const products = ref([
-    {
-        id: 1,
-        name: 'iPhone 13 Pro',
-        description: 'Apple iPhone 13 Pro 256GB',
-        category: 'Điện tử',
-        price: 27990000,
-        status: 'active',
-        image: 'https://images.unsplash.com/photo-1632661674596-79bd3e16c2bd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=100&q=80'
-    },
-    {
-        id: 2,
-        name: 'MacBook Pro M1',
-        description: 'Apple MacBook Pro 13" M1',
-        category: 'Điện tử',
-        price: 32990000,
-        status: 'active',
-        image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=100&q=80'
-    },
-    {
-        id: 3,
-        name: 'AirPods Pro',
-        description: 'Apple AirPods Pro',
-        category: 'Điện tử',
-        price: 5990000,
-        status: 'inactive',
-        image: 'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=100&q=80'
+const router = useRouter()
+const { products, getProducts, deleteProduct, loading, error } = useProduct()
+const { brands, getBrands } = useBrand()
+const { categories, getCategories } = useCategory()
+
+const searchQuery = ref('')
+const categoryFilter = ref('')
+
+const uniqueCategories = computed(() => {
+    const categories = products.value.map(product => product.category_name || 'Chưa phân loại')
+    return [...new Set(categories)]
+})
+
+const filteredProducts = computed(() => {
+    let filtered = products.value
+
+    if (searchQuery.value) {
+        filtered = filtered.filter(product =>
+            product.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+            product.description.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+            product.sku.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+            product.barcode.toLowerCase().includes(searchQuery.value.toLowerCase())
+        )
     }
-])
+
+    if (categoryFilter.value) {
+        filtered = filtered.filter(product =>
+            (product.category_name || 'Chưa phân loại') === categoryFilter.value
+        )
+    }
+
+    return filtered
+})
+
+const loadProducts = async () => {
+    try {
+        await getProducts()
+    } catch (err) {
+        console.error('Error loading products:', err)
+    }
+}
+
+const editProduct = (product) => {
+    router.push(`/products/edit/${product.id}`)
+}
+
+const confirmDeleteProduct = async (productId) => {
+    const result = await Swal.fire({
+        title: 'Xoá sản phẩm?',
+        text: 'Hành động này không thể hoàn tác!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Xoá',
+        cancelButtonText: 'Huỷ'
+    })
+
+    if (result.isConfirmed) {
+        try {
+            await deleteProduct(productId)
+            await loadProducts()
+            Swal.fire('Đã xoá!', 'Sản phẩm đã được xoá thành công.', 'success')
+        } catch (err) {
+            console.error('Error deleting product:', err)
+            Swal.fire('Lỗi', 'Không thể xoá sản phẩm.', 'error')
+        }
+    }
+}
+
+const handleImageError = (event) => {
+    if (!event.target.src.includes('/placeholder-image.png')) {
+        event.target.src = '/placeholder-image.png'
+    }
+}
 
 const formatPrice = (price) => {
     return new Intl.NumberFormat('vi-VN', {
         style: 'currency',
         currency: 'VND'
-    }).format(price)
+    }).format(parseFloat(price))
 }
+
+const getBrandName = (id) => {
+    const brand = brands.value.find(b => b.id === id)
+    return brand ? brand.name : 'Chưa có thương hiệu'
+}
+
+const getCategoryName = (id) => {
+    const category = categories.value.find(c => c.id === id)
+    return category ? category.name : 'Chưa phân loại'
+}
+
+onMounted(() => {
+    loadProducts()
+    getBrands()
+    getCategories()
+})
 </script>
+
+<style scoped>
+/* Custom Scrollbar */
+.scrollbar-thin::-webkit-scrollbar {
+    height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Theme shadows */
+.shadow-theme-xs {
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+/* Focus ring styles */
+.focus\:ring-3:focus {
+    box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+}
+
+.focus\:outline-hidden:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+}
+
+/* Barcode styles */
+.barcode {
+    max-width: 100%;
+    height: auto;
+}
+</style>

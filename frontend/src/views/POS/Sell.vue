@@ -1,11 +1,9 @@
 <template>
-    <div>
-
-    </div>
+    <PosContent />
 </template>
 
-<script lang="ts" setup>
-
+<script setup>
+import PosContent from '../../components/Pos/PosContent.vue';
 </script>
 
 <style></style>
