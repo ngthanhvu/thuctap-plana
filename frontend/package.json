@@ -11,6 +11,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",
     "axios": "^1.9.0",
+    "chart.js": "^4.4.9",
     "jsbarcode": "^3.12.1",
     "lucide-vue-next": "^0.513.0",
     "notyf": "^3.10.0",

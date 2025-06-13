@@ -21,6 +21,7 @@ app.use('/api/stock-movements', require('./routes/stock_movement.routes'));
 app.use('/api/pos', require('./routes/pos.routes'));
 app.use('/api/customers', require('./routes/customer.routes'));
 app.use('/api/orders', require('./routes/order.routes'));
+app.use('/api/dashboard', require('./routes/dashboard.routes'));
 
 const initializeServices = async () => {
     await connectRedis(); // 👈
