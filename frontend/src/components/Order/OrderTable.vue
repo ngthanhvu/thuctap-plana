@@ -111,6 +111,11 @@
                             </div>
                         </td>
                     </tr>
+                    <tr v-if="orders.length === 0">
+                        <td colspan="7" class="text-center">
+                            No orders found.
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>

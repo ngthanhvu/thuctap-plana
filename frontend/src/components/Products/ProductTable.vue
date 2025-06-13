@@ -99,7 +99,7 @@
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200 text-center">
                     <tr v-if="filteredProducts.length === 0">
-                        <td colspan="9" class="px-6 py-8 text-center text-gray-500">
+                        <td colspan="10" class="px-6 py-8 text-center text-gray-500">
                             Không có sản phẩm nào
                         </td>
                     </tr>

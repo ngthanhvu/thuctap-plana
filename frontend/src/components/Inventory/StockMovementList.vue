@@ -77,6 +77,13 @@
                         </button>
                     </td>
                 </tr>
+                <tr v-if="stockMovements.length === 0">
+                    <td colspan="8" class="text-center px-6 py-4 whitespace-nowrap">
+                        <div class="flex justify-center text-center">
+                            <span class="text-sm font-medium text-gray-500">Không có dữ liệu</span>
+                        </div>
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
