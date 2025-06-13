@@ -1,16 +1,26 @@
 const db = require('../models');
-const { Op, fn, col, literal } = require('sequelize');
+const cacheService = require('../services/cache.service');
+const { Op, fn, col } = require('sequelize');
+
 const Order = db.Order;
 const Customer = db.Customer;
 const Product = db.Product;
 
+const CACHE_KEYS = {
+    DASHBOARD: 'dashboard:data'
+};
+const CACHE_TTL = 300; // 5 phút
+
 exports.getDashboardData = async (req, res) => {
     try {
+        const cached = await cacheService.get(CACHE_KEYS.DASHBOARD);
+        if (cached) {
+            return res.json(cached);
+        }
+
         // Lấy tổng doanh thu
         const totalRevenue = await Order.sum('total', {
-            where: {
-                status: 'completed'
-            }
+            where: { status: 'completed' }
         });
 
         // Lấy tổng số đơn hàng
@@ -84,14 +94,18 @@ exports.getDashboardData = async (req, res) => {
             })
         };
 
-        res.json({
+        const dashboardData = {
             totalRevenue: totalRevenue || 0,
             totalOrders,
             totalCustomers,
             totalProducts,
             recentOrders,
             chartData
-        });
+        };
+
+        await cacheService.set(CACHE_KEYS.DASHBOARD, dashboardData, CACHE_TTL);
+
+        res.json(dashboardData);
     } catch (error) {
         res.status(500).json({
             message: 'Lỗi khi lấy dữ liệu dashboard',

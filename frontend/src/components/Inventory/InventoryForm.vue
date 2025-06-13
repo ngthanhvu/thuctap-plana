@@ -43,7 +43,7 @@
                         </div>
                         <div>
                             <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">Ghi chú</label>
-                            <input type="text" id="notes" v-model="formData.notes"
+                            <input type="text" id="note" v-model="formData.note"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="Nhập ghi chú cho phiếu nhập/xuất">
                         </div>
@@ -225,7 +225,7 @@ const {
 const loading = computed(() => productLoading.value || inventoryLoading.value)
 const formData = ref({
     type: 'import',
-    notes: '',
+    note: '',
     items: []
 })
 
@@ -255,7 +255,7 @@ const totalValue = computed(() => {
 })
 
 const getImageUrl = (imagePath) => {
-    if (!imagePath) return 'https://via.placeholder.com/40'
+    if (!imagePath) return 'https://placehold.io/40'
     if (imagePath.startsWith('http')) return imagePath
     return `${import.meta.env.VITE_API_URL}/${imagePath}`
 }

@@ -51,7 +51,6 @@ const userInfo = ref(null);
 
 onMounted(async () => {
     userInfo.value = await getUserInfo();
-    console.log(userInfo.value);
 });
 
 const handleLogout = () => {

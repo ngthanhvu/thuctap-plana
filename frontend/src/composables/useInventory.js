@@ -17,7 +17,6 @@ export const useInventory = () => {
     const inventories = ref([])
     const stockMovements = ref([])
 
-    // Lấy danh sách inventory
     const getInventories = async () => {
         try {
             loading.value = true
@@ -34,7 +33,6 @@ export const useInventory = () => {
         }
     }
 
-    // Lấy inventory theo product ID
     const getInventoryByProduct = async (productId) => {
         try {
             loading.value = true
@@ -50,7 +48,6 @@ export const useInventory = () => {
         }
     }
 
-    // Tạo stock movement (nhập/xuất kho)
     const createStockMovement = async (data) => {
         try {
             loading.value = true
@@ -68,7 +65,6 @@ export const useInventory = () => {
         }
     }
 
-    // Lấy lịch sử stock movements
     const getStockMovements = async () => {
         try {
             loading.value = true
@@ -92,11 +88,11 @@ export const useInventory = () => {
                     'Content-Type': 'application/json',
                 },
             })
-            
+
             if (!response.ok) {
                 throw new Error('Không thể tải thông tin phiếu')
             }
-            
+
             return await response.json()
         } catch (error) {
             console.error('Error fetching stock movement:', error)

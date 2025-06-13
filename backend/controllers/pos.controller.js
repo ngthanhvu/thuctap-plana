@@ -1,4 +1,6 @@
 const db = require('../models');
+const cacheService = require('../services/cache.service');
+
 const PosSession = db.PosSession;
 const Order = db.Order;
 const OrderItem = db.OrderItem;
@@ -11,20 +13,22 @@ const Product = db.Product;
 const Staff = db.Staff;
 const SalesReport = db.SalesReport;
 
-// Khởi tạo phiên POS
+const CACHE_KEYS = {
+    SALES_REPORT: (sessionId, date) => `sales_report:${sessionId || 'all'}:${date || 'all'}`,
+    SUMMARY_REPORT: (sessionId) => `summary_report:${sessionId || 'all'}`
+};
+const CACHE_TTL = 300; // 5 phút
+
 exports.startSession = async (req, res) => {
     try {
         const { staff_id, opening_cash = 0 } = req.body;
 
-        // Kiểm tra xem staff có phiên đang hoạt động không
         const activeSession = await PosSession.findOne({
             where: { staff_id, status: 'active' }
         });
 
         if (activeSession) {
-            return res.status(400).json({
-                message: 'Nhân viên đã có phiên POS đang hoạt động'
-            });
+            return res.status(400).json({ message: 'Nhân viên đã có phiên POS đang hoạt động' });
         }
 
         const session = await PosSession.create({
@@ -53,6 +57,8 @@ exports.endSession = async (req, res) => {
             end_time: new Date(),
             closing_cash
         });
+
+        await cacheService.del(CACHE_KEYS.SUMMARY_REPORT(session_id));
 
         res.json(session);
     } catch (error) {
@@ -90,16 +96,14 @@ exports.createOrder = async (req, res) => {
             status: 'completed'
         }, { transaction });
 
-        const orderItems = [];
         for (const item of items) {
-            const orderItem = await OrderItem.create({
+            await OrderItem.create({
                 order_id: order.id,
                 product_id: item.product_id,
                 quantity: item.quantity,
                 unit_price: item.unit_price,
                 total_price: item.quantity * item.unit_price
             }, { transaction });
-            orderItems.push(orderItem);
         }
 
         const stockMovement = await StockMovement.create({
@@ -180,15 +184,15 @@ exports.createOrder = async (req, res) => {
 
         await transaction.commit();
 
+        await cacheService.del(CACHE_KEYS.SALES_REPORT(pos_session_id, today));
+        await cacheService.del(CACHE_KEYS.SUMMARY_REPORT(pos_session_id));
+
         const orderWithDetails = await Order.findByPk(order.id, {
             include: [
                 {
                     model: OrderItem,
                     as: 'items',
-                    include: [{
-                        model: Product,
-                        as: 'product'
-                    }]
+                    include: [{ model: Product, as: 'product' }]
                 },
                 {
                     model: Customer,
@@ -207,8 +211,13 @@ exports.createOrder = async (req, res) => {
 exports.getSalesReport = async (req, res) => {
     try {
         const { session_id, date } = req.query;
+        const cacheKey = CACHE_KEYS.SALES_REPORT(session_id, date);
+        const cached = await cacheService.get(cacheKey);
+        if (cached) {
+            return res.json(cached);
+        }
 
-        let whereClause = {};
+        const whereClause = {};
         if (session_id) whereClause.pos_session_id = session_id;
         if (date) whereClause.date = date;
 
@@ -226,6 +235,8 @@ exports.getSalesReport = async (req, res) => {
             order: [['date', 'DESC']]
         });
 
+        await cacheService.set(cacheKey, reports, CACHE_TTL);
+
         res.json(reports);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -235,6 +246,11 @@ exports.getSalesReport = async (req, res) => {
 exports.getSummaryReport = async (req, res) => {
     try {
         const { session_id } = req.query;
+        const cacheKey = CACHE_KEYS.SUMMARY_REPORT(session_id);
+        const cached = await cacheService.get(cacheKey);
+        if (cached) {
+            return res.json(cached);
+        }
 
         const whereClause = session_id ? { pos_session_id: session_id } : {};
 
@@ -250,12 +266,16 @@ exports.getSummaryReport = async (req, res) => {
 
         const totalSales = parseFloat(summary.total_cash || 0) + parseFloat(summary.total_card || 0);
 
-        res.json({
+        const result = {
             total_cash_sales: parseFloat(summary.total_cash || 0),
             total_card_sales: parseFloat(summary.total_card || 0),
             total_sales: totalSales,
             total_orders: parseInt(summary.total_orders || 0)
-        });
+        };
+
+        await cacheService.set(cacheKey, result, CACHE_TTL);
+
+        res.json(result);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -272,14 +292,12 @@ exports.generatePaymentQR = async (req, res) => {
             timestamp: Date.now()
         };
 
-        // Trong thực tế, bạn sẽ tích hợp với ngân hàng hoặc ví điện tử
-        // Ở đây chỉ trả về dữ liệu mẫu
         const qrString = JSON.stringify(qrData);
 
         res.json({
             qr_data: qrString,
             qr_url: `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrString)}`,
-            expires_in: 300 // 5 phút
+            expires_in: 300
         });
     } catch (error) {
         res.status(500).json({ message: error.message });

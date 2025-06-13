@@ -146,7 +146,7 @@ defineEmits(['edit-product', 'adjust-stock', 'delete-product'])
 const getImageUrl = (imagePath) => {
     if (!imagePath) return 'https://via.placeholder.com/40'
     if (imagePath.startsWith('http')) return imagePath
-    return `${import.meta.env.VITE_API_URL}${imagePath}`
+    return `${import.meta.env.VITE_API_URL}/${imagePath}`
 }
 
 const formatPrice = (price) => {

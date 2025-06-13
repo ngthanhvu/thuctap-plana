@@ -12,7 +12,6 @@ const CACHE_KEYS = {
 };
 const CACHE_TTL = 3600;
 
-// Lấy tất cả phiếu nhập/xuất
 exports.getAll = async (req, res) => {
     try {
         const cached = await cacheService.get(CACHE_KEYS.ALL_MOVEMENTS);
@@ -89,7 +88,7 @@ exports.create = async (req, res) => {
     const transaction = await db.sequelize.transaction();
     try {
         const { type, note, items } = req.body;
-        const created_by = req.user?.id || req.body.created_by || 1; // Default staff ID = 1
+        const created_by = req.user?.id || req.body.created_by || 1;
 
         const movement = await StockMovement.create({
             type,

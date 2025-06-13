@@ -9,7 +9,6 @@ const CACHE_KEYS = {
 };
 const CACHE_TTL = 3600;
 
-// Lấy tất cả tồn kho
 exports.getAll = async (req, res) => {
     try {
         const cached = await cacheService.get(CACHE_KEYS.ALL_INVENTORIES);
@@ -33,7 +32,6 @@ exports.getAll = async (req, res) => {
     }
 };
 
-// Lấy tồn kho theo sản phẩm
 exports.getByProduct = async (req, res) => {
     try {
         const productId = req.params.productId;
@@ -62,7 +60,6 @@ exports.getByProduct = async (req, res) => {
     }
 };
 
-// Cập nhật tồn kho
 exports.updateQuantity = async (req, res) => {
     try {
         const { product_id, quantity } = req.body;
@@ -82,7 +79,6 @@ exports.updateQuantity = async (req, res) => {
             await inventory.save();
         }
 
-        // Xóa cache
         await cacheService.del(CACHE_KEYS.ALL_INVENTORIES);
         await cacheService.del(CACHE_KEYS.INVENTORY_BY_PRODUCT(product_id));
 
