@@ -17,6 +17,9 @@
                 <h3 class="font-semibold text-center">{{ product.name }}</h3>
                 <p class="text-sm text-center text-gray-600">{{ formatPrice(product.price) }}</p>
             </div>
+            <div v-if="filteredProducts.length === 0" class="col-span-4 text-center p-4">
+                <p class="text-lg text-gray-500">Không tìm thấy sản phẩm</p>
+            </div>
         </div>
     </div>
 </template>
