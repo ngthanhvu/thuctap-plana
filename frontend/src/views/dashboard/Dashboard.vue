@@ -1,14 +1,14 @@
 <template>
     <div class="p-6">
-        <!-- Header Section -->
+        <!-- Phần Tiêu Đề -->
         <div class="mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
-            <p class="text-gray-600">Overview of your business performance</p>
+            <h1 class="text-2xl font-bold text-gray-800">Bảng Điều Khiển</h1>
+            <p class="text-gray-600">Tổng quan về hiệu suất kinh doanh của bạn</p>
         </div>
 
-        <!-- Stats Cards -->
+        <!-- Các Thẻ Thống Kê -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-            <!-- Total Revenue Card -->
+            <!-- Thẻ Tổng Doanh Thu -->
             <div class="bg-white rounded-lg shadow p-6">
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-blue-100 text-blue-600">
@@ -18,14 +18,14 @@
                         </svg>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600">Total Revenue</p>
-                        <p class="text-2xl font-semibold text-gray-900">$24,500</p>
-                        <p class="text-sm text-green-600">+12% from last month</p>
+                        <p class="text-sm font-medium text-gray-600">Tổng Doanh Thu</p>
+                        <p class="text-2xl font-semibold text-gray-900">${{ dashboardData.totalRevenue.toLocaleString() }}</p>
+                        <p class="text-sm text-green-600">+12% so với tháng trước</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Total Orders Card -->
+            <!-- Thẻ Tổng Đơn Hàng -->
             <div class="bg-white rounded-lg shadow p-6">
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-green-100 text-green-600">
@@ -35,14 +35,14 @@
                         </svg>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600">Total Orders</p>
-                        <p class="text-2xl font-semibold text-gray-900">156</p>
-                        <p class="text-sm text-green-600">+8% from last month</p>
+                        <p class="text-sm font-medium text-gray-600">Tổng Đơn Hàng</p>
+                        <p class="text-2xl font-semibold text-gray-900">{{ dashboardData.totalOrders }}</p>
+                        <p class="text-sm text-green-600">+8% so với tháng trước</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Total Customers Card -->
+            <!-- Thẻ Tổng Khách Hàng -->
             <div class="bg-white rounded-lg shadow p-6">
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-purple-100 text-purple-600">
@@ -52,14 +52,14 @@
                         </svg>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600">Total Customers</p>
-                        <p class="text-2xl font-semibold text-gray-900">2,345</p>
-                        <p class="text-sm text-green-600">+15% from last month</p>
+                        <p class="text-sm font-medium text-gray-600">Tổng Khách Hàng</p>
+                        <p class="text-2xl font-semibold text-gray-900">{{ dashboardData.totalCustomers }}</p>
+                        <p class="text-sm text-green-600">+15% so với tháng trước</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Total Products Card -->
+            <!-- Thẻ Tổng Sản Phẩm -->
             <div class="bg-white rounded-lg shadow p-6">
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
@@ -69,71 +69,43 @@
                         </svg>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600">Total Products</p>
-                        <p class="text-2xl font-semibold text-gray-900">789</p>
-                        <p class="text-sm text-green-600">+5% from last month</p>
+                        <p class="text-sm font-medium text-gray-600">Tổng Sản Phẩm</p>
+                        <p class="text-2xl font-semibold text-gray-900">{{ dashboardData.totalProducts }}</p>
+                        <p class="text-sm text-green-600">+5% so với tháng trước</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Charts Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <!-- Revenue Chart -->
-            <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Revenue Overview</h3>
-                <div class="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
-                    <!-- Replace with actual chart component -->
-                    <p class="text-gray-500">Revenue Chart Placeholder</p>
-                </div>
-            </div>
-
-            <!-- Orders Chart -->
-            <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Orders Overview</h3>
-                <div class="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
-                    <!-- Replace with actual chart component -->
-                    <p class="text-gray-500">Orders Chart Placeholder</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recent Orders Table -->
+        <!-- Bảng Đơn Hàng Gần Đây -->
         <div class="bg-white rounded-lg shadow overflow-hidden">
             <div class="p-6 border-b border-gray-200">
-                <h3 class="text-lg font-medium text-gray-900">Recent Orders</h3>
+                <h3 class="text-lg font-medium text-gray-900">Đơn Hàng Gần Đây</h3>
             </div>
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order
-                            ID
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Customer</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Amount
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mã Đơn Hàng</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Khách Hàng</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Số Tiền</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng Thái</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    <tr v-for="order in recentOrders" :key="order.id" class="hover:bg-gray-50">
+                    <tr v-for="order in dashboardData.recentOrders" :key="order.id" class="hover:bg-gray-50">
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            #{{ order.id }}
+                            #{{ order.order_number }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">{{ order.customerName }}</div>
-                            <div class="text-sm text-gray-500">{{ order.customerEmail }}</div>
+                            <div class="text-sm text-gray-900">{{ order.customer?.name || 'Không có' }}</div>
+                            <div class="text-sm text-gray-500">{{ order.customer?.email || 'Không có' }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ formatDate(order.date) }}
+                            {{ formatDate(new Date(order.createdAt)) }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            ${{ order.amount.toFixed(2) }}
+                            ${{ order.total_amount?.toFixed(2) }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span :class="[
@@ -143,53 +115,192 @@
                                         order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
                                             'bg-yellow-100 text-yellow-800'
                             ]">
-                                {{ order.status }}
+                                {{ order.status === 'completed' ? 'Hoàn thành' :
+                                   order.status === 'processing' ? 'Đang xử lý' :
+                                   order.status === 'cancelled' ? 'Đã hủy' : 'Chờ xử lý' }}
                             </span>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
+        <!-- Thêm sau phần bảng Đơn Hàng Gần Đây và trước thẻ đóng div cuối cùng -->
+        
+        <!-- Phần Biểu Đồ -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <!-- Biểu Đồ Doanh Thu -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Biểu Đồ Doanh Thu</h3>
+                <div class="h-80">
+                    <canvas ref="revenueChart"></canvas>
+                </div>
+            </div>
+        
+            <!-- Biểu Đồ Đơn Hàng -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Biểu Đồ Đơn Hàng</h3>
+                <div class="h-80">
+                    <canvas ref="ordersChart"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
+        
+        <!-- Thêm vào phần script, sau phần import -->
+        <script lang="ts" setup>
+        import { ref, onMounted } from 'vue'
+        import useDashboard from '../../composables/useDashboard'
+        import Chart from 'chart.js/auto'
+        
+        const { dashboardData, fetchDashboardData } = useDashboard()
+        const loading = ref(false)
+        const error = ref('')
+        
+        const revenueChart = ref<HTMLCanvasElement | null>(null)
+        const ordersChart = ref<HTMLCanvasElement | null>(null)
+        
+        // Hàm hỗ trợ định dạng ngày tháng
+        const formatDate = (date: Date) => {
+          return date.toLocaleDateString()
+        }
+        
+        // Hàm khởi tạo biểu đồ doanh thu
+        const initRevenueChart = () => {
+          if (revenueChart.value) {
+            new Chart(revenueChart.value, {
+              type: 'line',
+              data: {
+                labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+                datasets: [{
+                  label: 'Doanh Thu',
+                  data: dashboardData.value.chartData?.revenue || [],
+                  fill: false,
+                  borderColor: 'rgb(75, 192, 192)',
+                  tension: 0.1
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false
+              }
+            })
+          }
+        }
+        
+        // Hàm khởi tạo biểu đồ đơn hàng
+        const initOrdersChart = () => {
+          if (ordersChart.value) {
+            new Chart(ordersChart.value, {
+              type: 'bar',
+              data: {
+                labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+                datasets: [{
+                  label: 'Số Đơn Hàng',
+                  data: dashboardData.value.chartData?.orders || [],
+                  backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                  borderColor: 'rgb(54, 162, 235)',
+                  borderWidth: 1
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false
+              }
+            })
+          }
+        }
+        
+        onMounted(async () => {
+          try {
+            loading.value = true
+            await fetchDashboardData()
+            // Khởi tạo biểu đồ sau khi có dữ liệu
+            initRevenueChart()
+            initOrdersChart()
+          } catch (err) {
+            error.value = 'Có lỗi xảy ra khi tải dữ liệu'
+            console.error('Error:', err)
+          } finally {
+            loading.value = false
+          }
+        })
+     
 
-<script lang="ts" setup>
-import { ref } from 'vue'
 
-// Mock data for recent orders
-const recentOrders = ref([
-    {
-        id: 1,
-        customerName: 'John Doe',
-        customerEmail: 'john@example.com',
-        date: new Date(),
-        amount: 299.99,
-        status: 'completed'
-    },
-    {
-        id: 2,
-        customerName: 'Jane Smith',
-        customerEmail: 'jane@example.com',
-        date: new Date(),
-        amount: 199.99,
-        status: 'processing'
-    },
-    {
-        id: 3,
-        customerName: 'Bob Johnson',
-        customerEmail: 'bob@example.com',
-        date: new Date(),
-        amount: 499.99,
-        status: 'pending'
-    }
-])
 
-// Format date helper
-const formatDate = (date: Date) => {
-    return date.toLocaleDateString()
-}
-</script>
+
+const setupCharts = () => {
+  const revenueCtx = document.getElementById('revenueChart');
+  const orderCtx = document.getElementById('orderChart');
+
+  if (revenueCtx && orderCtx && dashboardData.value.chartData) {
+    const months = [
+      'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
+      'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'
+    ];
+
+    new Chart(revenueCtx, {
+      type: 'line',
+      data: {
+        labels: months,
+        datasets: [{
+          label: 'Doanh thu theo tháng',
+          data: dashboardData.value.chartData.revenue,
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Biểu đồ doanh thu theo tháng'
+          }
+        }
+      }
+    });
+
+    new Chart(orderCtx, {
+      type: 'bar',
+      data: {
+        labels: months,
+        datasets: [{
+          label: 'Số đơn hàng theo tháng',
+          data: dashboardData.value.chartData.orders,
+          backgroundColor: 'rgba(54, 162, 235, 0.5)',
+          borderColor: 'rgb(54, 162, 235)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Biểu đồ số đơn hàng theo tháng'
+          }
+        }
+      }
+    });
+  }
+};
+
+onMounted(async () => {
+  try {
+    loading.value = true;
+    await fetchDashboardData();
+    setupCharts(); // Gọi hàm thiết lập biểu đồ sau khi có dữ liệu
+  } catch (err) {
+    error.value = 'Có lỗi xảy ra khi tải dữ liệu';
+    console.error('Error:', err);
+  } finally {
+    loading.value = false;
+  }
+});
+        </script>
 
 <style scoped>
-/* Add any custom styles here */
+/* Thêm các kiểu tùy chỉnh tại đây */
 </style>
