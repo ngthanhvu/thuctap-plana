@@ -12,9 +12,42 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Tên ngân hàng</label>
-                        <input v-model="formData.bankName" type="text" required
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            placeholder="VD: Vietcombank">
+                        <select v-model="formData.bankName" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Chọn ngân hàng</option>
+                            <option value="VCB">Vietcombank</option>
+                            <option value="TCB">Techcombank</option>
+                            <option value="MB">MB Bank</option>
+                            <option value="ACB">ACB</option>
+                            <option value="VIB">VIB</option>
+                            <option value="BIDV">BIDV</option>
+                            <option value="VPB">VPBank</option>
+                            <option value="SCB">SCB</option>
+                            <option value="HDB">HDBank</option>
+                            <option value="MSB">MSB</option>
+                            <option value="TPB">TPBank</option>
+                            <option value="SHB">SHB</option>
+                            <option value="OCB">OCB</option>
+                            <option value="VAB">VietABank</option>
+                            <option value="NCB">NCB</option>
+                            <option value="SGB">SGB</option>
+                            <option value="BAB">BacABank</option>
+                            <option value="PGB">PGBank</option>
+                            <option value="GPB">GPBank</option>
+                            <option value="AGB">Agribank</option>
+                            <option value="SAC">Sacombank</option>
+                            <option value="EIB">Eximbank</option>
+                            <option value="LPB">LienVietPostBank</option>
+                            <option value="ABB">ABBank</option>
+                            <option value="BVB">BaoVietBank</option>
+                            <option value="VCCB">VietCapitalBank</option>
+                            <option value="KLB">KienLongBank</option>
+                            <option value="NAB">NamABank</option>
+                            <option value="PVB">PVcomBank</option>
+                            <option value="UOB">UOB</option>
+                            <option value="VNM">VietinBank</option>
+                            <option value="VTB">VietBank</option>
+                        </select>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Số tài khoản</label>
@@ -122,8 +155,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import Swal from 'sweetalert2'
+import { usePayment } from '../../composables/usePayment'
+
+const { loading, error, getQRInfo, createBankAccount, updateBankAccount, deleteBankAccount } = usePayment()
 
 const formData = ref({
     bankName: '',
@@ -137,18 +173,33 @@ const bankAccounts = ref([])
 
 const handleSubmit = async () => {
     try {
-        // TODO: Implement API call to save bank account
-        const newAccount = { ...formData.value, id: Date.now() }
-        bankAccounts.value.push(newAccount)
+        const settings = [
+            { key: 'bank_name', value: formData.value.bankName },
+            { key: 'bank_account_no', value: formData.value.accountNumber },
+            { key: 'bank_account_name', value: formData.value.accountHolder },
+            { key: 'bank_branch', value: formData.value.branch },
+            { key: 'bank_note', value: formData.value.note }
+        ];
 
-        // Reset form
+        await createBankAccount(settings);
+
+        const newAccount = {
+            id: Date.now(),
+            bankName: formData.value.bankName,
+            accountNumber: formData.value.accountNumber,
+            accountHolder: formData.value.accountHolder,
+            branch: formData.value.branch,
+            note: formData.value.note
+        };
+        bankAccounts.value.push(newAccount);
+
         formData.value = {
             bankName: '',
             accountNumber: '',
             accountHolder: '',
             branch: '',
             note: ''
-        }
+        };
 
         Swal.fire({
             position: 'center',
@@ -156,22 +207,115 @@ const handleSubmit = async () => {
             title: 'Thêm tài khoản thành công!',
             showConfirmButton: false,
             timer: 1500
-        })
+        });
     } catch (error) {
         Swal.fire({
             position: 'center',
             icon: 'error',
             title: 'Có lỗi xảy ra!',
-            text: error.message,
+            text: error,
             showConfirmButton: true
-        })
+        });
     }
-}
+};
 
-const editAccount = (account) => {
-    // TODO: Implement edit functionality
-    console.log('Edit account:', account)
-}
+const editAccount = async (account) => {
+    try {
+        const { value: formValues } = await Swal.fire({
+            title: 'Sửa tài khoản',
+            html: `
+                <select id="bankName" class="swal2-select" required>
+                    <option value="">Chọn ngân hàng</option>
+                    <option value="VCB" ${account.bankName === 'VCB' ? 'selected' : ''}>Vietcombank</option>
+                    <option value="TCB" ${account.bankName === 'TCB' ? 'selected' : ''}>Techcombank</option>
+                    <option value="MB" ${account.bankName === 'MB' ? 'selected' : ''}>MB Bank</option>
+                    <option value="ACB" ${account.bankName === 'ACB' ? 'selected' : ''}>ACB</option>
+                    <option value="VIB" ${account.bankName === 'VIB' ? 'selected' : ''}>VIB</option>
+                    <option value="BIDV" ${account.bankName === 'BIDV' ? 'selected' : ''}>BIDV</option>
+                    <option value="VPB" ${account.bankName === 'VPB' ? 'selected' : ''}>VPBank</option>
+                    <option value="SCB" ${account.bankName === 'SCB' ? 'selected' : ''}>SCB</option>
+                    <option value="HDB" ${account.bankName === 'HDB' ? 'selected' : ''}>HDBank</option>
+                    <option value="MSB" ${account.bankName === 'MSB' ? 'selected' : ''}>MSB</option>
+                    <option value="TPB" ${account.bankName === 'TPB' ? 'selected' : ''}>TPBank</option>
+                    <option value="SHB" ${account.bankName === 'SHB' ? 'selected' : ''}>SHB</option>
+                    <option value="OCB" ${account.bankName === 'OCB' ? 'selected' : ''}>OCB</option>
+                    <option value="VAB" ${account.bankName === 'VAB' ? 'selected' : ''}>VietABank</option>
+                    <option value="NCB" ${account.bankName === 'NCB' ? 'selected' : ''}>NCB</option>
+                    <option value="SGB" ${account.bankName === 'SGB' ? 'selected' : ''}>SGB</option>
+                    <option value="BAB" ${account.bankName === 'BAB' ? 'selected' : ''}>BacABank</option>
+                    <option value="PGB" ${account.bankName === 'PGB' ? 'selected' : ''}>PGBank</option>
+                    <option value="GPB" ${account.bankName === 'GPB' ? 'selected' : ''}>GPBank</option>
+                    <option value="AGB" ${account.bankName === 'AGB' ? 'selected' : ''}>Agribank</option>
+                    <option value="SAC" ${account.bankName === 'SAC' ? 'selected' : ''}>Sacombank</option>
+                    <option value="EIB" ${account.bankName === 'EIB' ? 'selected' : ''}>Eximbank</option>
+                    <option value="LPB" ${account.bankName === 'LPB' ? 'selected' : ''}>LienVietPostBank</option>
+                    <option value="ABB" ${account.bankName === 'ABB' ? 'selected' : ''}>ABBank</option>
+                    <option value="BVB" ${account.bankName === 'BVB' ? 'selected' : ''}>BaoVietBank</option>
+                    <option value="VCCB" ${account.bankName === 'VCCB' ? 'selected' : ''}>VietCapitalBank</option>
+                    <option value="KLB" ${account.bankName === 'KLB' ? 'selected' : ''}>KienLongBank</option>
+                    <option value="NAB" ${account.bankName === 'NAB' ? 'selected' : ''}>NamABank</option>
+                    <option value="PVB" ${account.bankName === 'PVB' ? 'selected' : ''}>PVcomBank</option>
+                    <option value="UOB" ${account.bankName === 'UOB' ? 'selected' : ''}>UOB</option>
+                    <option value="VNM" ${account.bankName === 'VNM' ? 'selected' : ''}>VietinBank</option>
+                    <option value="VTB" ${account.bankName === 'VTB' ? 'selected' : ''}>VietBank</option>
+                </select>
+                <input id="accountNumber" class="swal2-input" placeholder="Số tài khoản" value="${account.accountNumber}">
+                <input id="accountHolder" class="swal2-input" placeholder="Chủ tài khoản" value="${account.accountHolder}">
+                <input id="branch" class="swal2-input" placeholder="Chi nhánh" value="${account.branch || ''}">
+                <textarea id="note" class="swal2-textarea" placeholder="Ghi chú">${account.note || ''}</textarea>
+            `,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'Lưu',
+            cancelButtonText: 'Hủy',
+            preConfirm: () => {
+                return {
+                    bankName: document.getElementById('bankName').value,
+                    accountNumber: document.getElementById('accountNumber').value,
+                    accountHolder: document.getElementById('accountHolder').value,
+                    branch: document.getElementById('branch').value,
+                    note: document.getElementById('note').value
+                }
+            }
+        });
+
+        if (formValues) {
+            const settings = [
+                { key: 'bank_name', value: formValues.bankName },
+                { key: 'bank_account_no', value: formValues.accountNumber },
+                { key: 'bank_account_name', value: formValues.accountHolder },
+                { key: 'bank_branch', value: formValues.branch },
+                { key: 'bank_note', value: formValues.note }
+            ];
+
+            await updateBankAccount(settings);
+
+            const index = bankAccounts.value.findIndex(a => a.id === account.id);
+            if (index !== -1) {
+                bankAccounts.value[index] = {
+                    ...account,
+                    ...formValues
+                };
+            }
+
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                title: 'Cập nhật tài khoản thành công!',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    } catch (error) {
+        Swal.fire({
+            position: 'center',
+            icon: 'error',
+            title: 'Có lỗi xảy ra!',
+            text: error,
+            showConfirmButton: true
+        });
+    }
+};
 
 const deleteAccount = async (account) => {
     try {
@@ -184,11 +328,19 @@ const deleteAccount = async (account) => {
             cancelButtonColor: '#3085d6',
             confirmButtonText: 'Xóa',
             cancelButtonText: 'Hủy'
-        })
+        });
 
         if (result.isConfirmed) {
-            // TODO: Implement API call to delete bank account
-            bankAccounts.value = bankAccounts.value.filter(a => a.id !== account.id)
+            const settings = [
+                { key: 'bank_name', value: null },
+                { key: 'bank_account_no', value: null },
+                { key: 'bank_account_name', value: null },
+                { key: 'bank_branch', value: null },
+                { key: 'bank_note', value: null }
+            ];
+
+            await deleteBankAccount(settings);
+            bankAccounts.value = bankAccounts.value.filter(a => a.id !== account.id);
 
             Swal.fire({
                 position: 'center',
@@ -196,18 +348,37 @@ const deleteAccount = async (account) => {
                 title: 'Đã xóa tài khoản!',
                 showConfirmButton: false,
                 timer: 1500
-            })
+            });
         }
     } catch (error) {
         Swal.fire({
             position: 'center',
             icon: 'error',
             title: 'Có lỗi xảy ra!',
-            text: error.message,
+            text: error,
             showConfirmButton: true
-        })
+        });
     }
-}
+};
+
+// Add this to fetch bank accounts when component is mounted
+onMounted(async () => {
+    try {
+        const settings = await getQRInfo();
+        if (settings.bank_code && settings.bank_account_no && settings.bank_account_name) {
+            bankAccounts.value = [{
+                id: 1,
+                bankName: settings.bank_code,
+                accountNumber: settings.bank_account_no,
+                accountHolder: settings.bank_account_name,
+                branch: settings.bank_branch,
+                note: settings.bank_note
+            }];
+        }
+    } catch (error) {
+        console.error('Lỗi khi lấy thông tin tài khoản:', error);
+    }
+});
 </script>
 
 <style lang="scss" scoped></style>

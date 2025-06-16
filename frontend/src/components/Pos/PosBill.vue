@@ -207,8 +207,13 @@
                 <div class="mb-4">
                     <div class="text-2xl font-bold text-green-600 mb-2">{{ formatPrice(cartFinalTotal) }}</div>
                     <div class="text-sm text-gray-600 mb-4">Quét mã QR để thanh toán</div>
+                    <div v-if="bankInfo" class="mb-4">
+                        <div class="text-sm text-gray-600">Tài khoản nhận tiền:</div>
+                        <div class="font-medium">{{ bankInfo.bank_account_no }}</div>
+                        <div class="text-sm">{{ bankInfo.bank_account_name }}</div>
+                    </div>
                     <div v-if="paymentQR" class="flex justify-center mb-4">
-                        <img :src="paymentQR.qr_url" alt="QR Code" class="w-48 h-48">
+                        <img :src="paymentQR.image" alt="QR Code" class="w-48 h-48">
                     </div>
                     <div class="text-xs text-gray-500">Mã QR sẽ hết hạn sau {{ qrCountdown }} giây</div>
                 </div>
@@ -230,6 +235,7 @@
 <script setup>
 import { ref, computed, onUnmounted } from 'vue'
 import { usePosStore } from '../../composables/usePos'
+import { usePayment } from '../../composables/usePayment'
 import Swal from 'sweetalert2'
 
 const {
@@ -246,10 +252,17 @@ const {
     currentSession,
     processPayment,
     saveDraftOrder,
-    generatePaymentQR,
-    createCustomer,
-    paymentQR
+    createCustomer
 } = usePosStore()
+
+const {
+    loading,
+    error,
+    paymentQR,
+    bankInfo,
+    getQRInfo,
+    generateQRCode
+} = usePayment()
 
 const customerSearch = ref('')
 const showCustomerDropdown = ref(false)
@@ -362,27 +375,34 @@ async function handlePayment(method) {
         }
 
         if (method === 'card') {
-            await generatePaymentQR(cartFinalTotal.value, currentOrderNumber.value)
+            const bankInfo = await getQRInfo()
+            if (!bankInfo.bank_code || !bankInfo.bank_account_no || !bankInfo.bank_account_name) {
+                Swal.fire({
+                    title: "Lỗi",
+                    text: "Chưa có thông tin tài khoản ngân hàng. Vui lòng cấu hình trong phần Cài đặt.",
+                    icon: "error"
+                })
+                return
+            }
+
+            await generateQRCode(cartFinalTotal.value, currentOrderNumber.value)
             showQRModal.value = true
             startQRCountdown()
         } else {
             const order = await processPayment(method)
-            console.log('Returned order:', order) // <- thêm dòng này
-            Swal.fire({ title: "Thành công", text: `Thanh toán thành công!\nMã đơn hàng: ${order.order_number}\nTổng tiền: ${formatPrice(order.total)}`, icon: "success" })
+            Swal.fire({
+                title: "Thành công",
+                text: `Thanh toán thành công!\nMã đơn hàng: ${order.order_number}\nTổng tiền: ${formatPrice(order.total)}`,
+                icon: "success"
+            })
         }
     } catch (error) {
-        console.log(`Lỗi thanh toán: ${error.message}`)
-    }
-}
-
-async function confirmQRPayment() {
-    try {
-        const order = await processPayment('card')
-        showQRModal.value = false
-        clearQRTimer()
-        Swal.fire({ title: "Thành công", text: `Thanh toán QR thành công!\nMã đơn hàng: ${order.order_number}\nTổng tiền: ${formatPrice(order.total)}`, icon: "success" })
-    } catch (error) {
-        console.log(`Lỗi thanh toán QR: ${error.message}`)
+        console.error('Payment error:', error);
+        Swal.fire({
+            title: "Lỗi",
+            text: `Có lỗi xảy ra: ${error}`,
+            icon: "error"
+        })
     }
 }
 
@@ -402,6 +422,17 @@ function clearQRTimer() {
     if (qrTimer.value) {
         clearInterval(qrTimer.value)
         qrTimer.value = null
+    }
+}
+
+async function confirmQRPayment() {
+    try {
+        const order = await processPayment('card')
+        showQRModal.value = false
+        clearQRTimer()
+        Swal.fire({ title: "Thành công", text: `Thanh toán QR thành công!\nMã đơn hàng: ${order.order_number}\nTổng tiền: ${formatPrice(order.total)}`, icon: "success" })
+    } catch (error) {
+        console.log(`Lỗi thanh toán QR: ${error.message}`)
     }
 }
 

@@ -76,14 +76,16 @@
                 <div class="flex items-center space-x-2">
                     <div
                         class="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-md">
-                        {{ user?.name?.charAt(0) || currentUser.name.charAt(0) }}
+                        {{ currentUser?.name?.charAt(0) || currentUser.name.charAt(0) }}
                     </div>
                     <div class="text-sm">
-                        <div class="font-medium text-gray-900">{{ user?.name || currentUser.name }}</div>
+                        <div class="font-medium text-gray-900">{{ currentUser?.name || currentUser.name }}</div>
                         <div class="flex items-center text-xs text-gray-500">
-                            <span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full mr-1">{{ user?.role ||
+                            <span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full mr-1">{{ currentUser?.role
+                                ||
                                 currentUser.role }}</span>
-                            <span v-if="user?.email" class="truncate max-w-[120px]">{{ user.email }}</span>
+                            <span v-if="currentUser?.email" class="truncate max-w-[120px]">{{ currentUser.email
+                                }}</span>
                         </div>
                     </div>
                 </div>
