@@ -32,6 +32,7 @@
                     <div class="w-2 h-2 bg-green-500 rounded-full"></div>
                     <span class="text-sm font-medium">Ca đang mở</span>
                     <span class="text-xs text-gray-500">{{ formatDateTime(currentSession.start_time) }}</span>
+                    <span class="text-xs text-gray-500">({{ sessionDuration }})</span>
                 </div>
                 <div v-else class="flex items-center space-x-2 text-red-600">
                     <div class="w-2 h-2 bg-red-500 rounded-full"></div>
@@ -211,6 +212,7 @@ const {
 const { logout } = useAuth()
 
 const currentTime = ref('')
+const sessionDuration = ref('')
 const showSessionModal = ref(false)
 const showEndSessionModal = ref(false)
 const showReportModal = ref(false)
@@ -231,8 +233,19 @@ function updateTime() {
     currentTime.value = now.toLocaleTimeString('vi-VN', {
         hour: '2-digit',
         minute: '2-digit',
-        hour12: true
+        second: '2-digit',
+        hour12: false,
+        timeZone: 'Asia/Ho_Chi_Minh'
     })
+
+    if (currentSession.value) {
+        const startTime = new Date(currentSession.value.start_time)
+        const duration = now - startTime
+        const hours = Math.floor(duration / (1000 * 60 * 60))
+        const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60))
+        const seconds = Math.floor((duration % (1000 * 60)) / 1000)
+        sessionDuration.value = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+    }
 }
 
 function formatDate(date) {
@@ -240,12 +253,15 @@ function formatDate(date) {
         weekday: 'short',
         day: '2-digit',
         month: '2-digit',
-        year: 'numeric'
+        year: 'numeric',
+        timeZone: 'Asia/Ho_Chi_Minh'
     })
 }
 
 function formatDateTime(dateTime) {
-    return new Date(dateTime).toLocaleString('vi-VN')
+    return new Date(dateTime).toLocaleString('vi-VN', {
+        timeZone: 'Asia/Ho_Chi_Minh'
+    })
 }
 
 function formatPrice(price) {

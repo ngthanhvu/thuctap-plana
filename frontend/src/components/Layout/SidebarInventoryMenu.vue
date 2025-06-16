@@ -3,7 +3,7 @@
         <div class="relative">
             <button @click="toggleMenu"
                 class="w-full flex items-center justify-between p-2 rounded-lg hover:bg-[#EBF3FE] group transition duration-150"
-                :class="[isActive ? 'bg-[#EBF3FE] text-[#1B67FE] border' : 'text-[#636C7C]']">
+                :class="[isActive ? 'bg-[#EBF3FE] text-[#1B67FE]' : 'text-[#636C7C]']">
                 <div class="flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" :class="[isActive ? 'text-[#1B67FE]' : '']"
                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -21,17 +21,17 @@
             <div v-show="isMenuOpen" class="mt-2 ml-4 space-y-2">
                 <router-link to="/inventory/stock"
                     class="flex items-center p-2 rounded-lg hover:bg-[#EBF3FE] transition-colors duration-150"
-                    :class="[$route.path === '/inventory/stock' ? 'bg-[#EBF3FE] text-[#1B67FE] border' : 'text-[#636C7C]']">
+                    :class="[$route.path === '/inventory/stock' ? 'bg-[#EBF3FE] text-[#1B67FE]' : 'text-[#636C7C]']">
                     <span class="ml-3">Tồn kho</span>
                 </router-link>
                 <router-link to="/inventory/import"
                     class="flex items-center p-2 rounded-lg hover:bg-[#EBF3FE] transition-colors duration-150"
-                    :class="[$route.path === '/inventory/import' ? 'bg-[#EBF3FE] text-[#1B67FE] border' : 'text-[#636C7C]']">
+                    :class="[$route.path === '/inventory/import' ? 'bg-[#EBF3FE] text-[#1B67FE]' : 'text-[#636C7C]']">
                     <span class="ml-3">Nhập hàng</span>
                 </router-link>
                 <router-link to="/inventory/invoice"
                     class="flex items-center p-2 rounded-lg hover:bg-[#EBF3FE] transition-colors duration-150"
-                    :class="[$route.path === '/inventory/invoice' ? 'bg-[#EBF3FE] text-[#1B67FE] border' : 'text-[#636C7C]']">
+                    :class="[$route.path === '/inventory/invoice' ? 'bg-[#EBF3FE] text-[#1B67FE]' : 'text-[#636C7C]']">
                     <span class="ml-3">Hoá đơn</span>
                 </router-link>
             </div>

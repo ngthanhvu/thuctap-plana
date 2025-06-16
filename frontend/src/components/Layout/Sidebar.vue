@@ -12,6 +12,7 @@
                 <SidebarLink to="/orders" icon="shopping-bag">Đơn hàng</SidebarLink>
                 <SidebarLink to="/customers" icon="users">Khách hàng</SidebarLink>
                 <SidebarLink to="/staff" icon="user-group">Nhân viên</SidebarLink>
+                <SidebarLink to="/settings" icon="setting">Cài đặt</SidebarLink>
             </ul>
             <ul class="list-none mb-13">
                 <div class="pt-4 pb-4">

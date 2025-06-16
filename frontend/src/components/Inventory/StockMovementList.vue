@@ -286,15 +286,12 @@
 import { ref, onMounted, computed } from 'vue'
 import { useInventory } from '../../composables/useInventory'
 
-// Composables
 const { stockMovements, getStockMovements, loading, error } = useInventory()
 
-// State
 const showDetailsModal = ref(false)
 const showPrintModal = ref(false)
 const selectedMovement = ref(null)
 
-// Computed
 const totalQuantity = computed(() => {
     return selectedMovement.value?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0
 })
@@ -303,7 +300,6 @@ const totalAmount = computed(() => {
     return selectedMovement.value?.items?.reduce((sum, item) => sum + (item.quantity * item.unit_price), 0) || 0
 })
 
-// Methods
 const formatDate = (dateString) => {
     return new Date(dateString).toLocaleString('vi-VN')
 }

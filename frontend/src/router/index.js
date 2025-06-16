@@ -21,8 +21,10 @@ import Dashboard from '../views/dashboard/Dashboard.vue'
 import PosLayout from '../layouts/PosLayout.vue'
 import PosContent from '../views/POS/PosContent.vue'
 import PosReport from '../views/POS/Report.vue'
+import SettingConfig from '../views/settings/SettingConfig.vue'
 
 import { auth, admin } from './middleware/auth'
+import { compile } from 'vue'
 
 const routes = [
     {
@@ -173,7 +175,15 @@ const routes = [
                     title: 'Thêm nhân viên',
                     middleware: admin
                 }
-            }
+            },
+            {
+                path: '/settings',
+                name: 'Setting',
+                component: SettingConfig,
+                meta: {
+                    title: "Cài đặt"
+                }
+            },
         ]
     },
     {
@@ -206,7 +216,8 @@ const routes = [
                 }
             }
         ]
-    }
+    },
+
 ]
 
 const router = createRouter({

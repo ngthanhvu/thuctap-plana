@@ -34,7 +34,7 @@
                 <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
                     <tr>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                            ID
+                            #
                         </th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                             Tên thương hiệu

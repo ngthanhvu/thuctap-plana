@@ -36,13 +36,6 @@
                     <option value="month">Tháng này</option>
                     <option value="all">Tất cả</option>
                 </select>
-                <select v-model="staffFilter"
-                    class="w-full px-5 py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
-                    <option value="">Tất cả nhân viên</option>
-                    <option v-for="staff in staffList" :key="staff.id" :value="staff.id">
-                        {{ staff.name }}
-                    </option>
-                </select>
             </div>
             <button @click="refreshBillHistory"
                 class="px-3 py-1 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm flex items-center">
@@ -77,10 +70,6 @@
                                     <th scope="col"
                                         class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
                                         Thời gian
-                                    </th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                                        Nhân viên
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
@@ -119,9 +108,6 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                                         {{ formatDateTime(order.created_at) }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                                        {{ getStaffName(order.staff_id) }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                                         {{ order.customer?.name || 'Khách lẻ' }}
@@ -222,9 +208,8 @@
                 <div v-if="selectedOrder">
                     <div class="mb-4">
                         <p><strong>Mã đơn:</strong> {{ selectedOrder.order_number || selectedOrder.id }}</p>
-                        <p><strong>Nhân viên:</strong> {{ getStaffName(selectedOrder.staff_id) }}</p>
-                        <p><strong>Khách hàng:</strong> {{ selectedOrder.customer?.name || 'Khách lẻ' }}</p>
                         <p><strong>Thời gian:</strong> {{ formatDateTime(selectedOrder.created_at) }}</p>
+                        <p><strong>Khách hàng:</strong> {{ selectedOrder.customer?.name || 'Khách lẻ' }}</p>
                         <p><strong>Phương thức:</strong> {{ getPaymentMethodText(selectedOrder.payment_method) }}</p>
                         <p><strong>Trạng thái:</strong> {{ getStatusText(selectedOrder.status) }}</p>
                     </div>
@@ -267,21 +252,12 @@ import { usePosStore } from '../../composables/usePos'
 const { orders, fetchOrders } = usePosStore()
 
 const dateFilter = ref('today')
-const staffFilter = ref('')
 const searchQuery = ref('')
 const showOrderDetails = ref(false)
 const selectedOrder = ref(null)
 
-const staffList = ref([
-    { id: 1, name: 'Nguyễn Văn A' },
-    { id: 2, name: 'Trần Thị B' },
-    { id: 3, name: 'Lê Văn C' }
-])
-
 const filteredOrders = computed(() => {
     return orders.value.filter(order => {
-        const matchesStaff = !staffFilter.value || order.staff_id === parseInt(staffFilter.value)
-
         let matchesDate = true
         if (dateFilter.value !== 'all') {
             const orderDate = new Date(order.created_at)
@@ -310,10 +286,9 @@ const filteredOrders = computed(() => {
         const searchTerm = searchQuery.value.toLowerCase()
         const matchesSearch = !searchTerm ||
             (order.order_number && order.order_number.toLowerCase().includes(searchTerm)) ||
-            (order.customer?.name && order.customer.name.toLowerCase().includes(searchTerm)) ||
-            getStaffName(order.staff_id).toLowerCase().includes(searchTerm)
+            (order.customer?.name && order.customer.name.toLowerCase().includes(searchTerm))
 
-        return matchesStaff && matchesDate && matchesSearch
+        return matchesDate && matchesSearch
     })
 })
 
@@ -327,11 +302,6 @@ function formatPrice(price) {
 function formatDateTime(dateString) {
     if (!dateString) return ''
     return new Date(dateString).toLocaleString('vi-VN')
-}
-
-function getStaffName(staffId) {
-    const staff = staffList.value.find(s => s.id === staffId)
-    return staff ? staff.name : 'Không xác định'
 }
 
 function getPaymentMethodText(method) {
@@ -377,12 +347,11 @@ async function refreshBillHistory() {
 }
 
 function exportBillHistory() {
-    const headers = ['Mã đơn', 'Thời gian', 'Nhân viên', 'Khách hàng', 'Phương thức', 'Tổng tiền', 'Trạng thái']
+    const headers = ['Mã đơn', 'Thời gian', 'Khách hàng', 'Phương thức', 'Tổng tiền', 'Trạng thái']
 
     const rows = filteredOrders.value.map(order => [
         order.order_number || order.id,
         formatDateTime(order.created_at),
-        getStaffName(order.staff_id),
         order.customer?.name || 'Khách lẻ',
         getPaymentMethodText(order.payment_method),
         order.total,

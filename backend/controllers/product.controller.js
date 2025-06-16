@@ -12,7 +12,7 @@ const CACHE_KEYS = {
     PRODUCTS_BY_BRAND: (brand) => `products:brand:${brand}`,
     PRODUCTS_BY_CATEGORY: (category) => `products:category:${category}`
 };
-const CACHE_TTL = 3600;
+const CACHE_TTL = 300;
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {

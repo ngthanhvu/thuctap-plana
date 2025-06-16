@@ -7,7 +7,7 @@ const CustomerPoint = db.CustomerPoint;
 const CACHE_KEYS = {
     ALL_CUSTOMERS: 'customers:all'
 };
-const CACHE_TTL = 3600; // 1 giờ
+const CACHE_TTL = 300; // 1 giờ
 
 // Lấy danh sách khách hàng
 exports.getAll = async (req, res) => {

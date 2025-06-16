@@ -70,11 +70,16 @@ export const useInventory = () => {
             loading.value = true
             error.value = null
 
-            const response = await axios.get('/api/stock-movements')
+            const response = await axios.get('/api/stock-movements', {
+                params: {
+                    include: ['items', 'creator', 'items.product']
+                }
+            })
             stockMovements.value = response.data
             return response.data
         } catch (err) {
             error.value = err.response?.data?.message || 'Lấy lịch sử kho thất bại'
+            notyf.error(error.value)
             throw err
         } finally {
             loading.value = false
@@ -83,20 +88,21 @@ export const useInventory = () => {
 
     const getStockMovementById = async (id) => {
         try {
-            const response = await fetch(`${API_BASE_URL}/stock-movements/${id}`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+            loading.value = true
+            error.value = null
+
+            const response = await axios.get(`/api/stock-movements/${id}`, {
+                params: {
+                    include: ['items', 'creator', 'items.product']
+                }
             })
-
-            if (!response.ok) {
-                throw new Error('Không thể tải thông tin phiếu')
-            }
-
-            return await response.json()
-        } catch (error) {
-            console.error('Error fetching stock movement:', error)
-            throw error
+            return response.data
+        } catch (err) {
+            error.value = err.response?.data?.message || 'Lấy thông tin phiếu thất bại'
+            notyf.error(error.value)
+            throw err
+        } finally {
+            loading.value = false
         }
     }
 

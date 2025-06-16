@@ -10,7 +10,7 @@ const CACHE_KEYS = {
     ALL_MOVEMENTS: 'stock_movements:all',
     MOVEMENT_BY_ID: (id) => `stock_movements:${id}`
 };
-const CACHE_TTL = 3600;
+const CACHE_TTL = 300;
 
 exports.getAll = async (req, res) => {
     try {
@@ -27,18 +27,17 @@ exports.getAll = async (req, res) => {
                 {
                     model: Staff,
                     as: 'creator',
-                    attributes: ['id', 'name', 'email'],
-                    where: { deleted_at: null }
+                    attributes: ['id', 'name', 'email']
                 },
                 {
                     model: StockMovementItem,
                     as: 'items',
                     where: { deleted_at: null },
+                    required: false,
                     include: [{
                         model: Product,
                         as: 'product',
-                        attributes: ['id', 'name', 'sku'],
-                        where: { deleted_at: null }
+                        attributes: ['id', 'name', 'sku']
                     }]
                 }
             ],
@@ -48,6 +47,7 @@ exports.getAll = async (req, res) => {
         await cacheService.set(CACHE_KEYS.ALL_MOVEMENTS, movements, CACHE_TTL);
         res.json(movements);
     } catch (error) {
+        console.error('Error fetching stock movements:', error);
         res.status(500).json({ message: error.message });
     }
 };
@@ -101,11 +101,11 @@ exports.create = async (req, res) => {
     const transaction = await db.sequelize.transaction();
     try {
         const { type, note, items } = req.body;
-        const created_by = req.user?.id || req.body.created_by || 1;
+        const staff_id = req.user?.id || req.body.created_by || 1;
 
         const movement = await StockMovement.create({
             type,
-            created_by,
+            staff_id,
             note,
             created_at: new Date()
         }, { transaction });

@@ -367,6 +367,7 @@ async function handlePayment(method) {
             startQRCountdown()
         } else {
             const order = await processPayment(method)
+            console.log('Returned order:', order) // <- thêm dòng này
             Swal.fire({ title: "Thành công", text: `Thanh toán thành công!\nMã đơn hàng: ${order.order_number}\nTổng tiền: ${formatPrice(order.total)}`, icon: "success" })
         }
     } catch (error) {

@@ -1,6 +1,7 @@
 import { ref, computed, provide, inject, onMounted, watch } from 'vue';
 import axios from "axios";
 import { useAuth } from './useAuth';
+import { useInventory } from './useInventory';
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 
@@ -16,6 +17,7 @@ export function usePosStore() {
 
 export function createPosStore() {
   const { user: authUser, isAuthenticated } = useAuth();
+  const { getInventories, inventories } = useInventory();
 
   const categories = ref([]);
   const products = ref([]);
@@ -29,7 +31,7 @@ export function createPosStore() {
   const salesReport = ref(null);
   const paymentQR = ref(null);
   const orders = ref([]);
-  const currentView = ref('pos'); // pos, orders, report, inventory, teams, settings
+  const currentView = ref('pos');
 
   function restoreSession() {
     try {
@@ -100,6 +102,7 @@ export function createPosStore() {
     try {
       const res = await axios.get("/api/products");
       products.value = res.data;
+      await getInventories();
     } catch (error) {
       console.error("Lỗi khi fetch products:", error);
     }
@@ -262,22 +265,25 @@ export function createPosStore() {
   });
 
   const filteredProducts = computed(() => {
-    return products.value.filter((product) => {
-      const matchesSearch = product.name
-        .toLowerCase()
-        .includes(searchQuery.value.toLowerCase());
-      const matchesCategory =
-        selectedCategory.value === 1 ||
-        product.category === selectedCategory.value;
-      return matchesSearch && matchesCategory;
-    });
+    if (!products.value) return [];
+
+    return products.value
+      .map(product => {
+        const inventory = inventories.value.find(inv => inv.product_id === product.id);
+        return {
+          ...product,
+          currentStock: inventory?.quantity || 0
+        };
+      })
+      .filter(product => {
+        const searchLower = searchQuery.value.toLowerCase();
+        return product.name.toLowerCase().includes(searchLower) ||
+          product.sku?.toLowerCase().includes(searchLower);
+      });
   });
 
   const cartTotal = computed(() => {
-    return cart.value.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0
-    );
+    return cart.value.reduce((total, item) => total + (item.price * item.quantity), 0);
   });
 
   const cartDiscount = computed(() => {
@@ -292,6 +298,10 @@ export function createPosStore() {
     return cartTotal.value - cartDiscount.value + cartTax.value;
   });
 
+  const cartItemsCount = computed(() => {
+    return cart.value.reduce((count, item) => count + item.quantity, 0);
+  });
+
   function setCategory(categoryId) {
     selectedCategory.value = categoryId;
     categories.value.forEach((cat) => {
@@ -300,31 +310,35 @@ export function createPosStore() {
   }
 
   function addToCart(product) {
-    const existingItem = cart.value.find((item) => item.id === product.id);
+    const existingItem = cart.value.find(item => item.id === product.id);
     if (existingItem) {
-      existingItem.quantity++;
+      if (existingItem.quantity < product.currentStock) {
+        existingItem.quantity++;
+      }
     } else {
       cart.value.push({
-        ...product,
+        id: product.id,
+        name: product.name,
+        price: product.price,
         quantity: 1,
+        image: product.image
       });
     }
   }
 
   function removeFromCart(productId) {
-    const index = cart.value.findIndex((item) => item.id === productId);
+    const index = cart.value.findIndex(item => item.id === productId);
     if (index > -1) {
       cart.value.splice(index, 1);
     }
   }
 
   function updateQuantity(productId, quantity) {
-    const item = cart.value.find((item) => item.id === productId);
+    const item = cart.value.find(item => item.id === productId);
     if (item) {
-      if (quantity > 0) {
+      const product = products.value.find(p => p.id === productId);
+      if (product && quantity <= product.currentStock) {
         item.quantity = quantity;
-      } else {
-        removeFromCart(productId);
       }
     }
   }
@@ -397,6 +411,7 @@ export function createPosStore() {
     cartDiscount,
     cartTax,
     cartFinalTotal,
+    cartItemsCount,
     setCategory,
     addToCart,
     removeFromCart,

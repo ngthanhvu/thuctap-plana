@@ -10,7 +10,7 @@ const CACHE_KEYS = {
     BRAND_BY_ID: (id) => `brands:${id}`
 };
 
-const CACHE_TTL = 3600;
+const CACHE_TTL = 300;
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {

@@ -7,7 +7,7 @@ const CACHE_KEYS = {
     ALL_INVENTORIES: 'inventories:all',
     INVENTORY_BY_PRODUCT: (productId) => `inventories:product:${productId}`
 };
-const CACHE_TTL = 3600;
+const CACHE_TTL = 300;
 
 exports.getAll = async (req, res) => {
     try {

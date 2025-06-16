@@ -6,7 +6,7 @@ const CACHE_KEYS = {
     ALL_CATEGORIES: 'categories:all',
     CATEGORY_BY_ID: (id) => `categories:${id}`
 };
-const CACHE_TTL = 3600;
+const CACHE_TTL = 300;
 
 exports.getAll = async (req, res) => {
     try {

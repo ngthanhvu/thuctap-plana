@@ -16,6 +16,12 @@
 
                 <h3 class="font-semibold text-center">{{ product.name }}</h3>
                 <p class="text-sm text-center text-gray-600">{{ formatPrice(product.price) }}</p>
+                <p class="text-sm text-center" :class="{
+                    'text-red-600': product.currentStock <= 10,
+                    'text-green-600': product.currentStock > 10
+                }">
+                    Tồn kho: {{ product.currentStock || 0 }}
+                </p>
             </div>
             <div v-if="filteredProducts.length === 0" class="col-span-4 text-center p-4">
                 <p class="text-lg text-gray-500">Không tìm thấy sản phẩm</p>
@@ -26,13 +32,20 @@
 
 <script setup>
 import { usePosStore } from '../../composables/usePos'
+import { useInventory } from '../../composables/useInventory'
+import { onMounted } from 'vue'
 
 const { searchQuery, filteredProducts, addToCart } = usePosStore()
+const { getInventories, inventories } = useInventory()
 
 function formatPrice(price) {
     return new Intl.NumberFormat('vi-VN', {
         style: 'currency',
         currency: 'VND'
     }).format(price)
-};
+}
+
+onMounted(async () => {
+    await getInventories()
+})
 </script>

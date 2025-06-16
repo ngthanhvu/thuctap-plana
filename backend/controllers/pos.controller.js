@@ -117,7 +117,7 @@ exports.createOrder = async (req, res) => {
 
         const stockMovement = await StockMovement.create({
             type: 'export',
-            created_by: staff_id,
+            staff_id,
             note: `Xuất kho cho đơn hàng ${order_number}`
         }, { transaction });
 
@@ -132,7 +132,7 @@ exports.createOrder = async (req, res) => {
             const inventory = await Inventory.findOne({
                 where: {
                     product_id: item.product_id,
-                    deleted_at: null
+                    // deleted_at: null
                 }
             });
 
@@ -149,7 +149,7 @@ exports.createOrder = async (req, res) => {
             where: {
                 pos_session_id,
                 date: today,
-                deleted_at: null
+                // deleted_at: null
             }
         });
 
@@ -189,7 +189,7 @@ exports.createOrder = async (req, res) => {
                 const customer = await Customer.findOne({
                     where: {
                         id: customer_id,
-                        deleted_at: null
+                        // deleted_at: null
                     }
                 });
                 if (customer) {
@@ -205,28 +205,56 @@ exports.createOrder = async (req, res) => {
         await cacheService.del(CACHE_KEYS.SALES_REPORT(pos_session_id, today));
         await cacheService.del(CACHE_KEYS.SUMMARY_REPORT(pos_session_id));
 
+        // const orderWithDetails = await Order.findOne({
+        //     where: {
+        //         id: order.id,
+        //         deleted_at: null
+        //     },
+        //     include: [
+        //         {
+        //             model: OrderItem,
+        //             as: 'items',
+        //             include: [{
+        //                 model: Product,
+        //                 as: 'product',
+        //                 where: { deleted_at: null }
+        //             }]
+        //         },
+        //         {
+        //             model: Customer,
+        //             as: 'customer',
+        //             where: { deleted_at: null }
+        //         }
+        //     ]
+        // });
+
         const orderWithDetails = await Order.findOne({
-            where: {
-                id: order.id,
-                deleted_at: null
-            },
+            where: { id: order.id },
             include: [
                 {
                     model: OrderItem,
                     as: 'items',
-                    include: [{
-                        model: Product,
-                        as: 'product',
-                        where: { deleted_at: null }
-                    }]
+                    include: [
+                        {
+                            model: Product,
+                            as: 'product'
+                        }
+                    ]
                 },
                 {
                     model: Customer,
-                    as: 'customer',
-                    where: { deleted_at: null }
+                    as: 'customer'
                 }
             ]
         });
+
+        // 🛡️ Check null để tránh gửi null ra frontend
+        if (!orderWithDetails) {
+            return res.status(500).json({ message: 'Không tìm thấy đơn hàng sau khi tạo' });
+        }
+
+        res.status(201).json(orderWithDetails);
+
 
         res.status(201).json(orderWithDetails);
     } catch (error) {

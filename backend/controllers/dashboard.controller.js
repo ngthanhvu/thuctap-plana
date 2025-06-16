@@ -18,21 +18,16 @@ exports.getDashboardData = async (req, res) => {
             return res.json(cached);
         }
 
-        // Lấy tổng doanh thu
         const totalRevenue = await Order.sum('total', {
             where: { status: 'completed' }
         });
 
-        // Lấy tổng số đơn hàng
         const totalOrders = await Order.count();
 
-        // Lấy tổng số khách hàng
         const totalCustomers = await Customer.count();
 
-        // Lấy tổng số sản phẩm
         const totalProducts = await Product.count();
 
-        // Lấy thống kê doanh thu theo tháng trong năm hiện tại
         const currentYear = new Date().getFullYear();
         const revenueByMonth = await Order.findAll({
             attributes: [
@@ -52,7 +47,6 @@ exports.getDashboardData = async (req, res) => {
             order: [[col('month'), 'ASC']]
         });
 
-        // Lấy thống kê số đơn hàng theo tháng trong năm hiện tại
         const ordersByMonth = await Order.findAll({
             attributes: [
                 [fn('DATE_FORMAT', col('created_at'), '%m'), 'month'],
@@ -70,7 +64,6 @@ exports.getDashboardData = async (req, res) => {
             order: [[col('month'), 'ASC']]
         });
 
-        // Lấy các đơn hàng gần đây
         const recentOrders = await Order.findAll({
             include: [{
                 model: Customer,
@@ -81,7 +74,6 @@ exports.getDashboardData = async (req, res) => {
             limit: 5
         });
 
-        // Chuẩn bị dữ liệu cho biểu đồ
         const months = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
         const chartData = {
             revenue: months.map(month => {

@@ -18,6 +18,7 @@ db.Order = require('./order.model')(sequelize, Sequelize);
 db.OrderItem = require('./order_item.model')(sequelize, Sequelize);
 db.CustomerPoint = require('./customer_point.model')(sequelize, Sequelize);
 db.SalesReport = require('./sales_report.model')(sequelize, Sequelize);
+db.Setting = require('./setting.model')(sequelize, Sequelize);
 
 // Thiết lập associations
 Object.keys(db).forEach(modelName => {

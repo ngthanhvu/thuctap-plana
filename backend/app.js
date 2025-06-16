@@ -22,6 +22,8 @@ app.use('/api/pos', require('./routes/pos.routes'));
 app.use('/api/customers', require('./routes/customer.routes'));
 app.use('/api/orders', require('./routes/order.routes'));
 app.use('/api/dashboard', require('./routes/dashboard.routes'));
+app.use('/api/settings', require('./routes/setting.routes'))
+app.use('/api/payment', require('./routes/payment.routes'))
 
 const initializeServices = async () => {
     await connectRedis(); // 👈

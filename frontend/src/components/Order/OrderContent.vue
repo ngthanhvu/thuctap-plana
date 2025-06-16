@@ -235,6 +235,7 @@ const selectedOrder = ref(null)
 
 onMounted(async () => {
     await getOrderList()
+    console.log(getOrderList());
 })
 
 const filteredOrders = computed(() => {
