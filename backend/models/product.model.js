@@ -46,12 +46,18 @@ module.exports = (sequelize, DataTypes) => {
         },
         updated_at: {
             type: DataTypes.DATE
+        },
+        deleted_at: {
+            type: DataTypes.DATE,
+            allowNull: true
         }
     }, {
         tableName: 'products',
         timestamps: true,
         createdAt: 'created_at',
         updatedAt: 'updated_at',
+        paranoid: true,
+        deletedAt: 'deleted_at'
     });
 
     return Product;

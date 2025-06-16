@@ -5,12 +5,15 @@ module.exports = (sequelize, DataTypes) => {
         parent_id: { type: DataTypes.INTEGER, allowNull: true }, // Cho phép null
         status: { type: DataTypes.STRING, allowNull: false },
         created_at: { type: DataTypes.DATE },
-        updated_at: { type: DataTypes.DATE }
+        updated_at: { type: DataTypes.DATE },
+        deleted_at: { type: DataTypes.DATE, allowNull: true }
     }, {
         tableName: 'categories',
         timestamps: true,
         createdAt: 'created_at',
         updatedAt: 'updated_at',
+        paranoid: true,
+        deletedAt: 'deleted_at'
     });
 
     return Category;

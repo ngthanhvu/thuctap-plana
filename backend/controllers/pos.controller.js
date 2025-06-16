@@ -24,7 +24,11 @@ exports.startSession = async (req, res) => {
         const { staff_id, opening_cash = 0 } = req.body;
 
         const activeSession = await PosSession.findOne({
-            where: { staff_id, status: 'active' }
+            where: {
+                staff_id,
+                status: 'active',
+                deleted_at: null
+            }
         });
 
         if (activeSession) {
@@ -47,7 +51,12 @@ exports.endSession = async (req, res) => {
     try {
         const { session_id, closing_cash } = req.body;
 
-        const session = await PosSession.findByPk(session_id);
+        const session = await PosSession.findOne({
+            where: {
+                id: session_id,
+                deleted_at: null
+            }
+        });
         if (!session) {
             return res.status(404).json({ message: 'Không tìm thấy phiên POS' });
         }
@@ -121,7 +130,10 @@ exports.createOrder = async (req, res) => {
             }, { transaction });
 
             const inventory = await Inventory.findOne({
-                where: { product_id: item.product_id }
+                where: {
+                    product_id: item.product_id,
+                    deleted_at: null
+                }
             });
 
             if (inventory) {
@@ -136,7 +148,8 @@ exports.createOrder = async (req, res) => {
         let salesReport = await SalesReport.findOne({
             where: {
                 pos_session_id,
-                date: today
+                date: today,
+                deleted_at: null
             }
         });
 
@@ -173,7 +186,12 @@ exports.createOrder = async (req, res) => {
                     description: `Tích điểm từ đơn hàng ${order_number}`
                 }, { transaction });
 
-                const customer = await Customer.findByPk(customer_id);
+                const customer = await Customer.findOne({
+                    where: {
+                        id: customer_id,
+                        deleted_at: null
+                    }
+                });
                 if (customer) {
                     await customer.update({
                         points: customer.points + pointsEarned
@@ -187,16 +205,25 @@ exports.createOrder = async (req, res) => {
         await cacheService.del(CACHE_KEYS.SALES_REPORT(pos_session_id, today));
         await cacheService.del(CACHE_KEYS.SUMMARY_REPORT(pos_session_id));
 
-        const orderWithDetails = await Order.findByPk(order.id, {
+        const orderWithDetails = await Order.findOne({
+            where: {
+                id: order.id,
+                deleted_at: null
+            },
             include: [
                 {
                     model: OrderItem,
                     as: 'items',
-                    include: [{ model: Product, as: 'product' }]
+                    include: [{
+                        model: Product,
+                        as: 'product',
+                        where: { deleted_at: null }
+                    }]
                 },
                 {
                     model: Customer,
-                    as: 'customer'
+                    as: 'customer',
+                    where: { deleted_at: null }
                 }
             ]
         });
@@ -217,7 +244,9 @@ exports.getSalesReport = async (req, res) => {
             return res.json(cached);
         }
 
-        const whereClause = {};
+        const whereClause = {
+            deleted_at: null
+        };
         if (session_id) whereClause.pos_session_id = session_id;
         if (date) whereClause.date = date;
 
@@ -226,10 +255,12 @@ exports.getSalesReport = async (req, res) => {
             include: [{
                 model: PosSession,
                 as: 'posSession',
+                where: { deleted_at: null },
                 include: [{
                     model: Staff,
                     as: 'staff',
-                    attributes: ['id', 'name']
+                    attributes: ['id', 'name'],
+                    where: { deleted_at: null }
                 }]
             }],
             order: [['date', 'DESC']]

@@ -15,7 +15,7 @@
           </div>
           <div class="ml-4">
             <p class="text-sm font-medium text-gray-600">Tổng Doanh Thu</p>
-            <p class="text-2xl font-semibold text-gray-900">${{ dashboardData.totalRevenue.toLocaleString() }}</p>
+            <p class="text-2xl font-semibold text-gray-900">{{ formatCurrency(dashboardData.totalRevenue) }}</p>
             <p class="text-sm text-green-600">+12% so với tháng trước</p>
           </div>
         </div>
@@ -70,136 +70,190 @@
       <div class="p-6 border-b border-gray-200">
         <h3 class="text-lg font-medium text-gray-900">Đơn Hàng Gần Đây</h3>
       </div>
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
-          <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mã Đơn Hàng</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Khách Hàng</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Số Tiền</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng Thái</th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          <tr v-for="order in dashboardData.recentOrders" :key="order.id" class="hover:bg-gray-50">
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-              #{{ order.order_number }}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900">{{ order.customer?.name || 'Không có' }}</div>
-              <div class="text-sm text-gray-500">{{ order.customer?.email || 'Không có' }}</div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {{ formatDate(new Date(order.createdAt)) }}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-              ${{ order.total_amount?.toFixed(2) }}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span :class="[
-                'px-2 inline-flex text-xs leading-5 font-semibold rounded-full',
-                order.status === 'completed' ? 'bg-green-100 text-green-800' :
-                  order.status === 'processing' ? 'bg-blue-100 text-blue-800' :
-                    order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                      'bg-yellow-100 text-yellow-800'
-              ]">
-                {{ order.status === 'completed' ? 'Hoàn thành' :
-                  order.status === 'processing' ? 'Đang xử lý' :
-                    order.status === 'cancelled' ? 'Đã hủy' : 'Chờ xử lý' }}
-              </span>
-            </td>
-          </tr>
-          <tr v-if="dashboardData.chartData?.orders">
-            <td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-              Không có đơn hàng mới
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mã Đơn Hàng
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Khách Hàng</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Số Tiền</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng Thái</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr v-for="order in dashboardData.recentOrders" :key="order.id" class="hover:bg-gray-50">
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                #{{ order.order_number }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">{{ order.customer?.name || 'Không có' }}</div>
+                <div class="text-sm text-gray-500">{{ order.customer?.email || 'Không có' }}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ formatDate(new Date(order.createdAt)) }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                {{ formatCurrency(order.total_amount) }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span :class="[
+                  'px-2 inline-flex text-xs leading-5 font-semibold rounded-full',
+                  order.status === 'completed' ? 'bg-green-100 text-green-800' :
+                    order.status === 'processing' ? 'bg-blue-100 text-blue-800' :
+                      order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                        'bg-yellow-100 text-yellow-800'
+                ]">
+                  {{ getOrderStatusText(order.status) }}
+                </span>
+              </td>
+            </tr>
+            <tr v-if="dashboardData.chartData?.orders">
+              <td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                Không có đơn hàng mới
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
       <div class="bg-white rounded-lg shadow p-6">
         <h3 class="text-lg font-medium text-gray-900 mb-4">Biểu Đồ Doanh Thu</h3>
         <div class="h-80">
-          <canvas ref="revenueChart"></canvas>
+          <apexchart type="line" height="100%" :options="revenueChartOptions" :series="revenueSeries" />
         </div>
       </div>
       <div class="bg-white rounded-lg shadow p-6">
         <h3 class="text-lg font-medium text-gray-900 mb-4">Biểu Đồ Đơn Hàng</h3>
         <div class="h-80">
-          <canvas ref="ordersChart"></canvas>
+          <apexchart type="bar" height="100%" :options="ordersChartOptions" :series="ordersSeries" />
         </div>
       </div>
     </div>
   </div>
 </template>
+
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import useDashboard from '../../composables/useDashboard'
-import Chart from 'chart.js/auto'
+import VueApexCharts from 'vue3-apexcharts'
 
 const { dashboardData, fetchDashboardData } = useDashboard()
 const loading = ref(false)
 const error = ref('')
 
-const revenueChart = ref<HTMLCanvasElement | null>(null)
-const ordersChart = ref<HTMLCanvasElement | null>(null)
+const months = [
+  'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
+  'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'
+]
 
-const formatDate = (date: Date) => {
-  return date.toLocaleDateString()
+const revenueChartOptions = computed(() => ({
+  chart: {
+    type: 'line',
+    toolbar: {
+      show: false
+    }
+  },
+  xaxis: {
+    categories: months,
+    labels: {
+      style: {
+        fontSize: '12px'
+      }
+    }
+  },
+  yaxis: {
+    labels: {
+      formatter: (value) => formatCurrency(value)
+    }
+  },
+  tooltip: {
+    y: {
+      formatter: (value) => formatCurrency(value)
+    }
+  },
+  colors: ['#4CAF50'],
+  stroke: {
+    curve: 'smooth',
+    width: 2
+  },
+  markers: {
+    size: 4
+  }
+}))
+
+const ordersChartOptions = computed(() => ({
+  chart: {
+    type: 'bar',
+    toolbar: {
+      show: false
+    }
+  },
+  xaxis: {
+    categories: months,
+    labels: {
+      style: {
+        fontSize: '12px'
+      }
+    }
+  },
+  yaxis: {
+    labels: {
+      formatter: (value) => Math.round(value)
+    }
+  },
+  colors: ['#2196F3'],
+  plotOptions: {
+    bar: {
+      borderRadius: 4,
+      columnWidth: '60%'
+    }
+  }
+}))
+
+const revenueSeries = computed(() => [{
+  name: 'Doanh Thu',
+  data: dashboardData.value.chartData?.revenue || []
+}])
+
+const ordersSeries = computed(() => [{
+  name: 'Số Đơn Hàng',
+  data: dashboardData.value.chartData?.orders || []
+}])
+
+const formatCurrency = (value) => {
+  return new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND'
+  }).format(value)
 }
 
-const initRevenueChart = () => {
-  if (revenueChart.value) {
-    new Chart(revenueChart.value, {
-      type: 'line',
-      data: {
-        labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
-        datasets: [{
-          label: 'Doanh Thu',
-          data: dashboardData.value.chartData?.revenue || [],
-          fill: false,
-          borderColor: 'rgb(75, 192, 192)',
-          tension: 0.1
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false
-      }
-    })
-  }
+const formatDate = (date) => {
+  return new Intl.DateTimeFormat('vi-VN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(date)
 }
 
-const initOrdersChart = () => {
-  if (ordersChart.value) {
-    new Chart(ordersChart.value, {
-      type: 'bar',
-      data: {
-        labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
-        datasets: [{
-          label: 'Số Đơn Hàng',
-          data: dashboardData.value.chartData?.orders || [],
-          backgroundColor: 'rgba(54, 162, 235, 0.5)',
-          borderColor: 'rgb(54, 162, 235)',
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false
-      }
-    })
+const getOrderStatusText = (status) => {
+  const statusMap = {
+    'completed': 'Hoàn thành',
+    'processing': 'Đang xử lý',
+    'cancelled': 'Đã hủy',
+    'pending': 'Chờ xử lý'
   }
+  return statusMap[status] || status
 }
 
 onMounted(async () => {
   try {
     loading.value = true
     await fetchDashboardData()
-    // Khởi tạo biểu đồ sau khi có dữ liệu
-    initRevenueChart()
-    initOrdersChart()
   } catch (err) {
     error.value = 'Có lỗi xảy ra khi tải dữ liệu'
     console.error('Error:', err)
@@ -207,82 +261,12 @@ onMounted(async () => {
     loading.value = false
   }
 })
-
-
-
-
-
-const setupCharts = () => {
-  const revenueCtx = document.getElementById('revenueChart');
-  const orderCtx = document.getElementById('orderChart');
-
-  if (revenueCtx && orderCtx && dashboardData.value.chartData) {
-    const months = [
-      'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
-      'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'
-    ];
-
-    new Chart(revenueCtx, {
-      type: 'line',
-      data: {
-        labels: months,
-        datasets: [{
-          label: 'Doanh thu theo tháng',
-          data: dashboardData.value.chartData.revenue,
-          borderColor: 'rgb(75, 192, 192)',
-          tension: 0.1
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          title: {
-            display: true,
-            text: 'Biểu đồ doanh thu theo tháng'
-          }
-        }
-      }
-    });
-
-    new Chart(orderCtx, {
-      type: 'bar',
-      data: {
-        labels: months,
-        datasets: [{
-          label: 'Số đơn hàng theo tháng',
-          data: dashboardData.value.chartData.orders,
-          backgroundColor: 'rgba(54, 162, 235, 0.5)',
-          borderColor: 'rgb(54, 162, 235)',
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          title: {
-            display: true,
-            text: 'Biểu đồ số đơn hàng theo tháng'
-          }
-        }
-      }
-    });
-  }
-};
-
-onMounted(async () => {
-  try {
-    loading.value = true;
-    await fetchDashboardData();
-    setupCharts(); // Gọi hàm thiết lập biểu đồ sau khi có dữ liệu
-  } catch (err) {
-    error.value = 'Có lỗi xảy ra khi tải dữ liệu';
-    console.error('Error:', err);
-  } finally {
-    loading.value = false;
-  }
-});
 </script>
 
 <style scoped>
-/* Thêm các kiểu tùy chỉnh tại đây */
+.apexcharts-tooltip {
+  background: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 </style>

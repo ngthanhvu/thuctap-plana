@@ -2,32 +2,36 @@
     <li>
         <div class="relative">
             <button @click="toggleMenu"
-                class="w-full flex items-center justify-between p-2 rounded-lg hover:bg-gray-700"
-                :class="[isActive ? 'bg-gray-700' : '']">
+                class="w-full flex items-center justify-between p-2 rounded-lg hover:bg-[#EBF3FE] group transition duration-150"
+                :class="[isActive ? 'bg-[#EBF3FE] text-[#1B67FE] border' : 'text-[#636C7C]']">
                 <div class="flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" :class="[isActive ? 'text-[#1B67FE]' : '']"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
                     <span class="ml-3">Kho & tồn kho</span>
                 </div>
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform"
-                    :class="{ 'rotate-180': isMenuOpen }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    :class="[{ 'rotate-180': isMenuOpen }, isActive ? 'text-[#1B67FE]' : '']" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
             </button>
             <div v-show="isMenuOpen" class="mt-2 ml-4 space-y-2">
-                <router-link to="/inventory/stock" class="flex items-center p-2 rounded-lg hover:bg-gray-700"
-                    :class="[$route.path === '/inventory/stock' ? 'bg-gray-700' : '']">
+                <router-link to="/inventory/stock"
+                    class="flex items-center p-2 rounded-lg hover:bg-[#EBF3FE] transition-colors duration-150"
+                    :class="[$route.path === '/inventory/stock' ? 'bg-[#EBF3FE] text-[#1B67FE] border' : 'text-[#636C7C]']">
                     <span class="ml-3">Tồn kho</span>
                 </router-link>
-                <router-link to="/inventory/import" class="flex items-center p-2 rounded-lg hover:bg-gray-700"
-                    :class="[$route.path === '/inventory/import' ? 'bg-gray-700' : '']">
+                <router-link to="/inventory/import"
+                    class="flex items-center p-2 rounded-lg hover:bg-[#EBF3FE] transition-colors duration-150"
+                    :class="[$route.path === '/inventory/import' ? 'bg-[#EBF3FE] text-[#1B67FE] border' : 'text-[#636C7C]']">
                     <span class="ml-3">Nhập hàng</span>
                 </router-link>
-                <router-link to="/inventory/invoice" class="flex items-center p-2 rounded-lg hover:bg-gray-700"
-                    :class="[$route.path === '/inventory/invoice' ? 'bg-gray-700' : '']">
+                <router-link to="/inventory/invoice"
+                    class="flex items-center p-2 rounded-lg hover:bg-[#EBF3FE] transition-colors duration-150"
+                    :class="[$route.path === '/inventory/invoice' ? 'bg-[#EBF3FE] text-[#1B67FE] border' : 'text-[#636C7C]']">
                     <span class="ml-3">Hoá đơn</span>
                 </router-link>
             </div>

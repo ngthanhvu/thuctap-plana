@@ -67,17 +67,31 @@ module.exports = (sequelize, DataTypes) => {
                 isIn: [['pending', 'completed', 'cancelled']]
             }
         },
+        payment_status: {
+            type: DataTypes.STRING
+        },
         created_at: {
             type: DataTypes.DATE,
             allowNull: false,
             defaultValue: DataTypes.NOW
+        },
+        updated_at: {
+            type: DataTypes.DATE
+        },
+        deleted_at: {
+            type: DataTypes.DATE,
+            allowNull: true
         }
     }, {
         tableName: 'orders',
-        timestamps: false
+        timestamps: true,
+        createdAt: 'created_at',
+        updatedAt: 'updated_at',
+        paranoid: true,
+        deletedAt: 'deleted_at'
     });
 
-    Order.associate = function(models) {
+    Order.associate = function (models) {
         Order.belongsTo(models.Customer, {
             foreignKey: 'customer_id',
             as: 'customer'

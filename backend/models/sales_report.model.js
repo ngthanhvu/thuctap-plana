@@ -37,13 +37,24 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DATE,
             allowNull: false,
             defaultValue: DataTypes.NOW
+        },
+        updated_at: {
+            type: DataTypes.DATE
+        },
+        deleted_at: {
+            type: DataTypes.DATE,
+            allowNull: true
         }
     }, {
         tableName: 'sales_reports',
-        timestamps: false
+        timestamps: true,
+        createdAt: 'created_at',
+        updatedAt: 'updated_at',
+        paranoid: true,
+        deletedAt: 'deleted_at'
     });
 
-    SalesReport.associate = function(models) {
+    SalesReport.associate = function (models) {
         SalesReport.belongsTo(models.PosSession, {
             foreignKey: 'pos_session_id',
             as: 'posSession'

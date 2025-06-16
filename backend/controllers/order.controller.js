@@ -15,7 +15,11 @@ exports.getAll = async (req, res) => {
             return res.json(cached);
         }
 
-        const orders = await Order.findAll();
+        const orders = await Order.findAll({
+            where: {
+                deleted_at: null
+            }
+        });
 
         await cacheService.set(CACHE_KEYS.ALL_ORDERS, orders, CACHE_TTL);
 

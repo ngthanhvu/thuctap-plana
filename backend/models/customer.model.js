@@ -18,6 +18,9 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true
         },
+        address: {
+            type: DataTypes.STRING
+        },
         points: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -27,13 +30,24 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DATE,
             allowNull: false,
             defaultValue: DataTypes.NOW
+        },
+        updated_at: {
+            type: DataTypes.DATE
+        },
+        deleted_at: {
+            type: DataTypes.DATE,
+            allowNull: true
         }
     }, {
         tableName: 'customers',
-        timestamps: false
+        timestamps: true,
+        createdAt: 'created_at',
+        updatedAt: 'updated_at',
+        paranoid: true,
+        deletedAt: 'deleted_at'
     });
 
-    Customer.associate = function(models) {
+    Customer.associate = function (models) {
         Customer.hasMany(models.Order, {
             foreignKey: 'customer_id',
             as: 'orders'

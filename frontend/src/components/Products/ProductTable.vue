@@ -12,11 +12,8 @@
             Thêm sản phẩm mới
         </router-link>
     </div>
-
-    <!-- Modern Search and Filter Section -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 mb-3">
         <div class="flex flex-col lg:flex-row gap-4">
-            <!-- Search Input with Icon -->
             <div class="flex-1 relative">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -27,7 +24,6 @@
                 <input type="text" v-model="searchQuery" placeholder="Tìm kiếm sản phẩm..."
                     class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-gray-200 focus:border-gray-200 transition-colors duration-200">
             </div>
-            <!-- Category Filter -->
             <div class="w-full lg:w-64">
                 <select v-model="categoryFilter"
                     class="block w-full pl-3 pr-10 py-3 text-base border border-gray-300 rounded-lg leading-5 bg-white focus:outline-none focus:ring-1 focus:ring-gray-200 focus:border-gray-200 transition-colors duration-200">
@@ -38,14 +34,10 @@
             </div>
         </div>
     </div>
-
-    <!-- Loading State -->
     <div v-if="loading" class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
         <p class="mt-2 text-gray-600">Đang tải dữ liệu...</p>
     </div>
-
-    <!-- Error State -->
     <div v-else-if="error" class="bg-white rounded-xl shadow-sm border border-red-200 p-8 text-center">
         <div class="text-red-600 mb-2">
             <svg class="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,130 +50,141 @@
             Thử lại
         </button>
     </div>
-
-    <!-- Modern Table Container -->
     <div v-else class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div class="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
-                    <tr>
-                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                            #
-                        </th>
-                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                            Sản phẩm
-                        </th>
-                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                            SKU
-                        </th>
-                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                            Mã vạch
-                        </th>
-                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                            Giá bán
-                        </th>
-                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                            Giá vốn
-                        </th>
-                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                            Danh mục
-                        </th>
-                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                            Thương hiệu
-                        </th>
-                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                            Trạng thái
-                        </th>
-                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                            Thao tác
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200 text-center">
-                    <tr v-if="filteredProducts.length === 0">
-                        <td colspan="10" class="px-6 py-8 text-center text-gray-500">
-                            Không có sản phẩm nào
-                        </td>
-                    </tr>
-                    <tr v-for="(product, index) in filteredProducts" :key="product.id"
-                        class="hover:bg-gray-50 transition-colors duration-150">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900 font-semibold">#{{ index + 1 }}</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex items-center gap-3">
-                                <div class="h-10 w-10 flex-shrink-0">
-                                    <img class="h-10 w-10 rounded-lg object-cover border border-gray-200"
-                                        :src="product.image_url || '/placeholder-image.png'" :alt="product.name"
-                                        @error="handleImageError">
+        <div class="overflow-x-auto">
+            <div class="min-w-[1200px]">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
+                        <tr>
+                            <th
+                                class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                #
+                            </th>
+                            <th
+                                class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                Sản phẩm
+                            </th>
+                            <th
+                                class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                SKU
+                            </th>
+                            <th
+                                class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                Mã vạch
+                            </th>
+                            <th
+                                class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                Giá bán
+                            </th>
+                            <th
+                                class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                Giá vốn
+                            </th>
+                            <th
+                                class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                Danh mục
+                            </th>
+                            <th
+                                class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                Thương hiệu
+                            </th>
+                            <th
+                                class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                Trạng thái
+                            </th>
+                            <th
+                                class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                Thao tác
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200 text-center">
+                        <tr v-if="filteredProducts.length === 0">
+                            <td colspan="10" class="px-6 py-8 text-center text-gray-500">
+                                Không có sản phẩm nào
+                            </td>
+                        </tr>
+                        <tr v-for="(product, index) in filteredProducts" :key="product.id"
+                            class="hover:bg-gray-50 transition-colors duration-150">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900 font-semibold">#{{ index + 1 }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center gap-3">
+                                    <div class="h-10 w-10 flex-shrink-0">
+                                        <img class="h-10 w-10 rounded-lg object-cover border border-gray-200"
+                                            :src="product.image_url || '/placeholder-image.png'" :alt="product.name"
+                                            @error="handleImageError">
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-medium text-gray-900">{{ product.name }}</div>
+                                        <div class="text-sm text-gray-500 truncate max-w-[200px]">{{ product.description
+                                        }}</div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <div class="text-sm font-medium text-gray-900">{{ product.name }}</div>
-                                    <div class="text-sm text-gray-500">{{ product.description }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{ product.sku }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">
+                                    <Barcode :value="product.barcode" :id="product.id" />
                                 </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">{{ product.sku }}</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">
-                                <Barcode :value="product.barcode" :id="product.id" />
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900">{{ formatPrice(product.price) }}</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-500">{{ formatPrice(product.cost) }}</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">{{ getCategoryName(product.category_id) }}</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">{{ getBrandName(product.brand_id) }}</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span :class="[
-                                'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
-                                product.status === 'active'
-                                    ? 'bg-green-100 text-green-800'
-                                    : 'bg-yellow-100 text-yellow-800'
-                            ]">
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">{{ formatPrice(product.price) }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-500">{{ formatPrice(product.cost) }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{ getCategoryName(product.category_id) }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{ getBrandName(product.brand_id) }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
                                 <span :class="[
-                                    'w-1.5 h-1.5 mr-1.5 rounded-full',
+                                    'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
                                     product.status === 'active'
-                                        ? 'bg-green-400'
-                                        : 'bg-yellow-400'
-                                ]"></span>
-                                {{ product.status === 'active' ? 'Hoạt động' : 'Không hoạt động' }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <div class="flex items-center space-x-3">
-                                <button @click="editProduct(product)"
-                                    class="inline-flex items-center p-1.5 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-colors duration-150"
-                                    title="Chỉnh sửa sản phẩm">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
-                                        </path>
-                                    </svg>
-                                </button>
-                                <button @click="confirmDeleteProduct(product.id)"
-                                    class="inline-flex items-center p-1.5 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors duration-150"
-                                    title="Xóa sản phẩm">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                        </path>
-                                    </svg>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                                        ? 'bg-green-100 text-green-800'
+                                        : 'bg-yellow-100 text-yellow-800'
+                                ]">
+                                    <span :class="[
+                                        'w-1.5 h-1.5 mr-1.5 rounded-full',
+                                        product.status === 'active'
+                                            ? 'bg-green-400'
+                                            : 'bg-yellow-400'
+                                    ]"></span>
+                                    {{ product.status === 'active' ? 'Hoạt động' : 'Không hoạt động' }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex items-center space-x-3">
+                                    <button @click="editProduct(product)"
+                                        class="inline-flex items-center p-1.5 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-colors duration-150"
+                                        title="Chỉnh sửa sản phẩm">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                            </path>
+                                        </svg>
+                                    </button>
+                                    <button @click="confirmDeleteProduct(product.id)"
+                                        class="inline-flex items-center p-1.5 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors duration-150"
+                                        title="Xóa sản phẩm">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                            </path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </template>

@@ -24,13 +24,27 @@ module.exports = (sequelize, DataTypes) => {
         quantity: {
             type: DataTypes.INTEGER,
             allowNull: false
+        },
+        created_at: {
+            type: DataTypes.DATE
+        },
+        updated_at: {
+            type: DataTypes.DATE
+        },
+        deleted_at: {
+            type: DataTypes.DATE,
+            allowNull: true
         }
     }, {
         tableName: 'stock_movement_items',
-        timestamps: false
+        timestamps: true,
+        createdAt: 'created_at',
+        updatedAt: 'updated_at',
+        paranoid: true,
+        deletedAt: 'deleted_at'
     });
 
-    StockMovementItem.associate = function(models) {
+    StockMovementItem.associate = function (models) {
         StockMovementItem.belongsTo(models.StockMovement, {
             foreignKey: 'stock_movement_id',
             as: 'stockMovement'

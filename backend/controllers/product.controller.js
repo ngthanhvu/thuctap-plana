@@ -1,5 +1,6 @@
 const db = require('../models');
 const Product = db.Product;
+const Inventory = db.Inventory;
 const fs = require('fs');
 const multer = require('multer');
 const path = require('path');
@@ -70,7 +71,11 @@ exports.getAll = async (req, res) => {
             console.log('📦 Products loaded from cache');
             return res.json(cachedProducts);
         }
-        const products = await Product.findAll();
+        const products = await Product.findAll({
+            where: {
+                deleted_at: null
+            }
+        });
         const host = req.protocol + '://' + req.get('host');
         const result = products.map(product => {
             const productData = product.toJSON();
@@ -97,7 +102,12 @@ exports.getById = async (req, res) => {
             return res.json(cachedProduct);
         }
 
-        const product = await Product.findByPk(productId);
+        const product = await Product.findOne({
+            where: {
+                id: productId,
+                deleted_at: null
+            }
+        });
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
@@ -211,21 +221,27 @@ exports.update = async (req, res) => {
 };
 
 exports.delete = async (req, res) => {
+    const productId = req.params.id;
+
     try {
-        const productId = req.params.id;
-        const product = await Product.findByPk(productId);
-        if (!product) {
-            return res.status(404).json({ message: 'Product not found' });
-        }
-        if (product.image) {
-            const imagePath = path.join(__dirname, '..', product.image);
-            if (fs.existsSync(imagePath)) {
-                fs.unlinkSync(imagePath);
+        const product = await Product.findOne({
+            where: {
+                id: productId,
+                deleted_at: null
             }
+        });
+
+        if (!product) {
+            return res.status(404).json({ message: 'Không tìm thấy sản phẩm' });
         }
-        await product.destroy();
+
+        // Soft delete the product
+        await product.update({ deleted_at: new Date() });
+
+        // Clear cache
         await clearCache(productId, product.brand_id, product.category_id);
-        res.json({ message: 'Product deleted successfully' });
+
+        res.json({ message: 'Đã xóa sản phẩm thành công' });
     } catch (err) {
         console.error(`Error deleting product ${productId}:`, err);
         res.status(500).json({ message: err.message });

@@ -38,13 +38,27 @@ module.exports = (sequelize, DataTypes) => {
         closing_cash: {
             type: DataTypes.DECIMAL(10, 2),
             allowNull: true
+        },
+        created_at: {
+            type: DataTypes.DATE
+        },
+        updated_at: {
+            type: DataTypes.DATE
+        },
+        deleted_at: {
+            type: DataTypes.DATE,
+            allowNull: true
         }
     }, {
         tableName: 'pos_sessions',
-        timestamps: false
+        timestamps: true,
+        createdAt: 'created_at',
+        updatedAt: 'updated_at',
+        paranoid: true,
+        deletedAt: 'deleted_at'
     });
 
-    PosSession.associate = function(models) {
+    PosSession.associate = function (models) {
         PosSession.belongsTo(models.Staff, {
             foreignKey: 'staff_id',
             as: 'staff'

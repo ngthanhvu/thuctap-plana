@@ -17,6 +17,9 @@ exports.getAll = async (req, res) => {
         }
 
         const inventories = await Inventory.findAll({
+            where: {
+                deleted_at: null
+            },
             include: [{
                 model: Product,
                 as: 'product',
@@ -41,7 +44,10 @@ exports.getByProduct = async (req, res) => {
         }
 
         const inventory = await Inventory.findOne({
-            where: { product_id: productId },
+            where: {
+                product_id: productId,
+                deleted_at: null
+            },
             include: [{
                 model: Product,
                 as: 'product',
@@ -65,7 +71,10 @@ exports.updateQuantity = async (req, res) => {
         const { product_id, quantity } = req.body;
 
         const [inventory, created] = await Inventory.findOrCreate({
-            where: { product_id },
+            where: {
+                product_id,
+                deleted_at: null
+            },
             defaults: {
                 product_id,
                 quantity: quantity || 0,

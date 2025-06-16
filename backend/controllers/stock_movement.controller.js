@@ -20,19 +20,25 @@ exports.getAll = async (req, res) => {
         }
 
         const movements = await StockMovement.findAll({
+            where: {
+                deleted_at: null
+            },
             include: [
                 {
                     model: Staff,
                     as: 'creator',
-                    attributes: ['id', 'name', 'email']
+                    attributes: ['id', 'name', 'email'],
+                    where: { deleted_at: null }
                 },
                 {
                     model: StockMovementItem,
                     as: 'items',
+                    where: { deleted_at: null },
                     include: [{
                         model: Product,
                         as: 'product',
-                        attributes: ['id', 'name', 'sku']
+                        attributes: ['id', 'name', 'sku'],
+                        where: { deleted_at: null }
                     }]
                 }
             ],
@@ -54,20 +60,27 @@ exports.getById = async (req, res) => {
             return res.json(cached);
         }
 
-        const movement = await StockMovement.findByPk(id, {
+        const movement = await StockMovement.findOne({
+            where: {
+                id: id,
+                deleted_at: null
+            },
             include: [
                 {
                     model: Staff,
                     as: 'creator',
-                    attributes: ['id', 'name', 'email']
+                    attributes: ['id', 'name', 'email'],
+                    where: { deleted_at: null }
                 },
                 {
                     model: StockMovementItem,
                     as: 'items',
+                    where: { deleted_at: null },
                     include: [{
                         model: Product,
                         as: 'product',
-                        attributes: ['id', 'name', 'sku']
+                        attributes: ['id', 'name', 'sku'],
+                        where: { deleted_at: null }
                     }]
                 }
             ]
@@ -105,7 +118,10 @@ exports.create = async (req, res) => {
             }, { transaction });
 
             const [inventory] = await Inventory.findOrCreate({
-                where: { product_id: item.product_id },
+                where: {
+                    product_id: item.product_id,
+                    deleted_at: null
+                },
                 defaults: {
                     product_id: item.product_id,
                     quantity: 0,
@@ -144,10 +160,15 @@ exports.delete = async (req, res) => {
     try {
         const id = req.params.id;
 
-        const movement = await StockMovement.findByPk(id, {
+        const movement = await StockMovement.findOne({
+            where: {
+                id: id,
+                deleted_at: null
+            },
             include: [{
                 model: StockMovementItem,
-                as: 'items'
+                as: 'items',
+                where: { deleted_at: null }
             }]
         });
 
@@ -157,7 +178,10 @@ exports.delete = async (req, res) => {
 
         for (const item of movement.items) {
             const inventory = await Inventory.findOne({
-                where: { product_id: item.product_id },
+                where: {
+                    product_id: item.product_id,
+                    deleted_at: null
+                },
                 transaction
             });
 
@@ -172,12 +196,20 @@ exports.delete = async (req, res) => {
             }
         }
 
-        await StockMovementItem.destroy({
-            where: { stock_movement_id: id },
-            transaction
-        });
+        // Soft delete stock movement items
+        await StockMovementItem.update(
+            { deleted_at: new Date() },
+            {
+                where: { stock_movement_id: id },
+                transaction
+            }
+        );
 
-        await movement.destroy({ transaction });
+        // Soft delete stock movement
+        await movement.update(
+            { deleted_at: new Date() },
+            { transaction }
+        );
 
         await transaction.commit();
 

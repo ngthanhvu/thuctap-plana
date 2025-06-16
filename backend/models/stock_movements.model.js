@@ -12,7 +12,10 @@ module.exports = (sequelize, DataTypes) => {
                 isIn: [['import', 'export']]
             }
         },
-        created_by: {
+        reference: {
+            type: DataTypes.STRING
+        },
+        staff_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
@@ -28,15 +31,26 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DATE,
             allowNull: false,
             defaultValue: DataTypes.NOW
+        },
+        updated_at: {
+            type: DataTypes.DATE
+        },
+        deleted_at: {
+            type: DataTypes.DATE,
+            allowNull: true
         }
     }, {
         tableName: 'stock_movements',
-        timestamps: false
+        timestamps: true,
+        createdAt: 'created_at',
+        updatedAt: 'updated_at',
+        paranoid: true,
+        deletedAt: 'deleted_at'
     });
 
-    StockMovement.associate = function(models) {
+    StockMovement.associate = function (models) {
         StockMovement.belongsTo(models.Staff, {
-            foreignKey: 'created_by',
+            foreignKey: 'staff_id',
             as: 'creator'
         });
         StockMovement.hasMany(models.StockMovementItem, {

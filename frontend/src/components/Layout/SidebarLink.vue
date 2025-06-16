@@ -1,8 +1,8 @@
 <template>
     <li>
-        <router-link :to="to" class="flex items-center p-2 rounded-lg hover:bg-gray-700"
-            :class="[route.path === to ? 'bg-gray-700' : '']">
-            <component :is="iconComponent" class="h-5 w-5" />
+        <router-link :to="to" class="flex items-center p-2 rounded-lg hover:bg-[#EBF3FE] transition-colors duration-150"
+            :class="[route.path === to ? 'bg-[#EBF3FE] text-[#1B67FE] border' : 'text-[#636C7C]']">
+            <component :is="iconComponent" class="h-5 w-5" :class="[route.path === to ? 'text-[#1B67FE]' : '']" />
             <span class="ml-3">
                 <slot />
             </span>

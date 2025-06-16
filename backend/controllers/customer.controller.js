@@ -18,6 +18,9 @@ exports.getAll = async (req, res) => {
         }
 
         const customers = await Customer.findAll({
+            where: {
+                deleted_at: null
+            },
             order: [['created_at', 'ASC']]
         });
 
@@ -34,6 +37,7 @@ exports.search = async (req, res) => {
         const { query } = req.query;
         const customers = await Customer.findAll({
             where: {
+                deleted_at: null,
                 [db.Sequelize.Op.or]: [
                     { name: { [db.Sequelize.Op.like]: `%${query}%` } },
                     { phone: { [db.Sequelize.Op.like]: `%${query}%` } }
@@ -70,6 +74,7 @@ exports.delete = async (req, res) => {
             return res.status(404).json({ message: 'Khách hàng không tồn tại' });
         }
 
+        // Soft delete the customer
         await customer.destroy();
 
         // Xoá cache sau khi xoá dữ liệu

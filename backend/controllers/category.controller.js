@@ -15,7 +15,11 @@ exports.getAll = async (req, res) => {
             console.log('📦 Categories loaded from cache');
             return res.json(cachedCategories);
         }
-        const categories = await Category.findAll();
+        const categories = await Category.findAll({
+            where: {
+                deleted_at: null
+            }
+        });
 
         const result = categories.map(category => {
             return {
@@ -44,7 +48,12 @@ exports.getById = async (req, res) => {
             return res.json(cachedCategory);
         }
 
-        const category = await Category.findByPk(categoryId);
+        const category = await Category.findOne({
+            where: {
+                id: categoryId,
+                deleted_at: null
+            }
+        });
         if (!category) {
             return res.status(404).json({ message: 'Not found' });
         }
@@ -97,7 +106,10 @@ exports.delete = async (req, res) => {
         if (!category) {
             return res.status(404).json({ message: 'Not found' });
         }
+
+        // Soft delete the category
         await category.destroy();
+
         await clearCache(categoryId);
         res.json({ message: 'Deleted successfully' });
     } catch (err) {

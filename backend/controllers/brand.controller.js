@@ -43,7 +43,11 @@ exports.getAll = async (req, res) => {
             return res.status(200).json(cachedBrands);
         }
 
-        const brands = await Brand.findAll();
+        const brands = await Brand.findAll({
+            where: {
+                deleted_at: null
+            }
+        });
 
         const host = req.protocol + '://' + req.get('host');
         const result = brands.map(brand => {
@@ -77,7 +81,12 @@ exports.getById = async (req, res) => {
             return res.status(200).json(cachedBrand);
         }
 
-        const brand = await Brand.findByPk(brandId);
+        const brand = await Brand.findOne({
+            where: {
+                id: brandId,
+                deleted_at: null
+            }
+        });
         if (!brand) {
             return res.status(404).json({ message: 'Không tìm thấy brand' });
         }
@@ -181,10 +190,7 @@ exports.delete = async (req, res) => {
             return res.status(404).json({ message: 'Không tìm thấy brand' });
         }
 
-        if (brand.image && fs.existsSync(brand.image)) {
-            fs.unlinkSync(brand.image);
-        }
-
+        // Soft delete the brand
         await brand.destroy();
 
         await Promise.all([

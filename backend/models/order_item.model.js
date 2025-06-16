@@ -32,13 +32,27 @@ module.exports = (sequelize, DataTypes) => {
         total_price: {
             type: DataTypes.DECIMAL(10, 2),
             allowNull: false
+        },
+        created_at: {
+            type: DataTypes.DATE
+        },
+        updated_at: {
+            type: DataTypes.DATE
+        },
+        deleted_at: {
+            type: DataTypes.DATE,
+            allowNull: true
         }
     }, {
         tableName: 'order_items',
-        timestamps: false
+        timestamps: true,
+        createdAt: 'created_at',
+        updatedAt: 'updated_at',
+        paranoid: true,
+        deletedAt: 'deleted_at'
     });
 
-    OrderItem.associate = function(models) {
+    OrderItem.associate = function (models) {
         OrderItem.belongsTo(models.Order, {
             foreignKey: 'order_id',
             as: 'order'
