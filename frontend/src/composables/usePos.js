@@ -119,7 +119,7 @@ export function createPosStore() {
 
   async function fetchOrders() {
     try {
-      const res = await axios.get('/api/orders');
+      const res = await axios.get('/api/orders/staff');
       orders.value = res.data;
     } catch (error) {
       console.error("Lỗi khi fetch orders:", error);

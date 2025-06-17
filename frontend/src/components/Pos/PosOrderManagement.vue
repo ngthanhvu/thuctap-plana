@@ -126,7 +126,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { usePosStore } from '../../composables/usePos'
 
-const { orders, fetchOrders, updateOrderStatus, cancelOrder } = usePosStore()
+const { orders, fetchOrders, updateOrderStatus, cancelOrder, currentUser } = usePosStore()
 
 const statusFilter = ref('')
 const paymentFilter = ref('')
@@ -137,7 +137,8 @@ const filteredOrders = computed(() => {
     return orders.value.filter(order => {
         const matchesStatus = !statusFilter.value || order.status === statusFilter.value
         const matchesPayment = !paymentFilter.value || order.payment_method === paymentFilter.value
-        return matchesStatus && matchesPayment
+        const matchesUser = order.staff_id === currentUser.value.id
+        return matchesStatus && matchesPayment && matchesUser
     })
 })
 
