@@ -44,18 +44,16 @@ export const useAuth = () => {
             const response = await axios.post('/api/staffs/login', { email, password })
 
             setAuth(response.data.staff, response.data.token)
-            Swal.fire({
-                title: 'Đăng nhập thành công!',
-                text: 'Nhấn OK để tiếp tục',
-                icon: 'success',
-                timer: 3000,
-                confirmButtonText: 'OK',
-                timerProgressBar: true,
-            }).then(() => {
-                // router.push('/');
+            Toast.fire({
+                icon: "success",
+                title: "Đăng nhập thành công"
             });
             return response.data
         } catch (err) {
+            Toast.fire({
+                icon: "error",
+                title: "Đăng nhập thất bại"
+            })
             error.value = err.response?.data?.message || 'Đăng nhập thất bại'
             throw err
         } finally {

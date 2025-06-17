@@ -277,8 +277,10 @@ export function createPosStore() {
       })
       .filter(product => {
         const searchLower = searchQuery.value.toLowerCase();
-        return product.name.toLowerCase().includes(searchLower) ||
+        const matchesSearch = product.name.toLowerCase().includes(searchLower) ||
           product.sku?.toLowerCase().includes(searchLower);
+        const matchesCategory = selectedCategory.value === 0 || product.category_id === selectedCategory.value;
+        return matchesSearch && matchesCategory;
       });
   });
 

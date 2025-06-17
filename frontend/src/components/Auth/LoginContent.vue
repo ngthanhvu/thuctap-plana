@@ -135,13 +135,10 @@ const handleLogin = async () => {
         saveLoginInfo();
 
         const response = await login(email.value, password.value);
-        
-        // Điều hướng dựa trên vai trò người dùng
+
         if (isAdmin()) {
-            // Nếu là admin, chuyển đến trang chính
             router.push('/');
         } else {
-            // Nếu không phải admin, chuyển đến trang POS
             router.push('/pos/sell');
         }
     } catch (error) {
